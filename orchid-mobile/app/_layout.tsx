@@ -17,6 +17,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from '@/config/firebase';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { useProtectedRoute } from '@/hooks/useProtectedRoute';
+import { useBinderSubscription } from '@/hooks/useBinderSubscription';
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -34,6 +35,9 @@ export default function RootLayout() {
 
   const { setUser, setLoading } = useAuthStore();
 
+  useProtectedRoute();
+  useBinderSubscription();
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
       console.log('Auth State Changed:', user ? 'Logged In' : 'Logged Out');
@@ -42,8 +46,6 @@ export default function RootLayout() {
     });
     return unsubscribe;
   }, []);
-
-  useProtectedRoute();
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {

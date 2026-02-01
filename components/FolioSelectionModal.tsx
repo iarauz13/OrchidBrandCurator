@@ -54,15 +54,15 @@ const FolioSelectionModal: React.FC<FolioSelectionModalProps> = ({
         setSuggestions([]);
         return;
       }
-      
+
       setIsLoadingSuggestions(true);
-      
+
       try {
         const selectedStores = allStores.filter(s => localSelected.has(s.id));
         // Use a random item from current selection as the anchor for variety in discovery
         const anchor = selectedStores[Math.floor(Math.random() * selectedStores.length)];
         const candidates = allStores.filter(s => !localSelected.has(s.id) && s.description);
-        
+
         if (anchor && candidates.length > 0) {
           const recIds = await findSimilarAestheticBrands(anchor, candidates, 3);
           const recStores = allStores.filter(s => recIds.includes(s.id));
@@ -105,11 +105,11 @@ const FolioSelectionModal: React.FC<FolioSelectionModalProps> = ({
       <div className="bg-brand-surface rounded-3xl w-full max-w-2xl 
         max-h-[85vh] flex flex-col shadow-2xl overflow-hidden border 
         border-brand-border">
-        
+
         <div className="p-medium-lg border-b border-brand-border flex 
           justify-between items-center bg-brand-bg/20">
           <div>
-            <h3 className="text-display-sm font-semibold font-display">
+            <h3 className="text-display-sm font-semibold font-display text-brand-text-primary">
               Curate {folioName}
             </h3>
             <p className="text-small text-brand-text-secondary">
@@ -126,7 +126,7 @@ const FolioSelectionModal: React.FC<FolioSelectionModalProps> = ({
           <div className="relative">
             <SearchIcon className="absolute left-4 top-1/2 -translate-y-1/2 
               size-4 text-brand-text-secondary" />
-            <input 
+            <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -144,7 +144,7 @@ const FolioSelectionModal: React.FC<FolioSelectionModalProps> = ({
             <div className="p-medium-lg bg-brand-secondary/5 border-b border-brand-border">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <p className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-brand-primary">
+                  <p className="text-[10px] font-extrabold uppercase tracking-[0.3em] text-brand-text-primary">
                     AI Aesthetic Pairings
                   </p>
                   <p className="text-[9px] text-brand-text-secondary opacity-70 italic">
@@ -162,8 +162,8 @@ const FolioSelectionModal: React.FC<FolioSelectionModalProps> = ({
                   </>
                 ) : suggestions.length > 0 ? (
                   suggestions.map((s, idx) => (
-                    <div 
-                      key={s.id} 
+                    <div
+                      key={s.id}
                       style={{ animationDelay: `${idx * 100}ms` }}
                       className="flex items-center justify-between p-3 bg-brand-surface rounded-xl border border-brand-border shadow-sm hover:shadow-subtle hover:border-brand-secondary transition-all animate-in fade-in slide-in-from-top-2 fill-mode-both"
                     >
@@ -190,7 +190,7 @@ const FolioSelectionModal: React.FC<FolioSelectionModalProps> = ({
                           </div>
                         </div>
                       </div>
-                      <button 
+                      <button
                         onClick={() => toggleStore(s.id)}
                         className="ml-4 p-2 text-brand-secondary hover:text-brand-primary hover:scale-110 active:scale-95 transition-all"
                         title="Add to Folio"
@@ -201,7 +201,7 @@ const FolioSelectionModal: React.FC<FolioSelectionModalProps> = ({
                   ))
                 ) : localSelected.size > 0 && !isLoadingSuggestions && (
                   <div className="p-4 rounded-xl border border-dashed border-brand-border bg-white/40 text-center">
-                    <p className="text-[10px] text-brand-text-secondary italic">The curator's eye is unique; no DNA matches found for this specific pairing yet.</p>
+                    <p className="text-[10px] text-brand-text-secondary italic font-medium">The curator's eye is unique; no DNA matches found for this specific pairing yet.</p>
                   </div>
                 )}
               </div>
@@ -210,18 +210,18 @@ const FolioSelectionModal: React.FC<FolioSelectionModalProps> = ({
 
           <div className="p-medium-lg space-y-tight-md">
             {filteredStores.map(store => (
-              <label 
+              <label
                 key={store.id}
                 className={`flex items-center justify-between p-medium-sm 
                   rounded-xl border transition-all cursor-pointer group
-                  ${localSelected.has(store.id) 
-                    ? 'bg-brand-secondary/10 border-brand-secondary shadow-sm' 
+                  ${localSelected.has(store.id)
+                    ? 'bg-brand-secondary/10 border-brand-secondary shadow-sm'
                     : 'bg-brand-surface border-brand-border hover:bg-brand-bg'
                   }`}
               >
                 <div className="flex items-center gap-medium-sm truncate">
                   <div className="relative flex items-center justify-center">
-                    <input 
+                    <input
                       type="checkbox"
                       className="size-5 rounded border-brand-border 
                         text-brand-secondary focus:ring-brand-secondary cursor-pointer"
@@ -255,7 +255,7 @@ const FolioSelectionModal: React.FC<FolioSelectionModalProps> = ({
                 )}
               </label>
             ))}
-            
+
             {filteredStores.length === 0 && (
               <div className="py-12 text-center opacity-40 font-display italic">
                 No matching records in archive.
@@ -266,15 +266,15 @@ const FolioSelectionModal: React.FC<FolioSelectionModalProps> = ({
 
         <div className="p-medium-lg border-t border-brand-border bg-brand-bg/30 
           flex gap-medium-sm shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
-          <button 
+          <button
             onClick={onClose}
             className="flex-1 py-4 bg-brand-surface border 
               border-brand-border font-sans font-bold text-small 
-              uppercase tracking-widest rounded-xl hover:bg-brand-bg transition-all active:scale-[0.98]"
+              uppercase tracking-widest rounded-xl hover:bg-brand-bg transition-all active:scale-[0.98] text-brand-text-primary"
           >
             Cancel
           </button>
-          <button 
+          <button
             onClick={() => onSave(Array.from(localSelected))}
             className="flex-1 py-4 bg-brand-primary text-white 
               font-sans font-bold text-small uppercase tracking-widest rounded-xl 
