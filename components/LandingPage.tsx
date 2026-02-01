@@ -15,6 +15,7 @@ interface LandingPageProps {
 export default function LandingPage({ onEnter }: LandingPageProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [isFailsafe, setIsFailsafe] = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
@@ -114,7 +115,7 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: "+=300%",
+        end: "+=200%",
         scrub: 1,
         pin: true,
       },
@@ -125,6 +126,22 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
         }
       }
     });
+
+    // Animate Logo Color via Filter
+    // Start: White (Invert 1, Grayscale 1, Brightness 3)
+    // End: Peach (Invert 1, Sepia 1, Hue Rotate -40deg, Saturate 4, Brightness 0.9)
+    gsap.fromTo(logoRef.current,
+      { filter: "invert(1) grayscale(1) brightness(3)" },
+      {
+        filter: "invert(1) sepia(1) hue-rotate(-20deg) saturate(4) brightness(1.5) contrast(1.2)",
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top top",
+          end: "+=200%",
+          scrub: true,
+        }
+      }
+    );
   }, [isLoaded, isFailsafe, renderFrame]);
 
   return (
@@ -154,9 +171,15 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
         )}
 
         <div className={`absolute inset-0 flex flex-col items-center justify-center z-20 px-6 transition-all duration-1000 ${(isLoaded || isFailsafe) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-          <h1 className="text-white text-display-lg font-light tracking-tight mb-8 leading-tight font-display drop-shadow-2xl">
-            Orchid.
-          </h1>
+          <div className="mb-10 drop-shadow-2xl">
+            <img
+              ref={logoRef as any}
+              src="/orchid_full_logo.png"
+              alt="Orchid Architecture"
+              className="w-full max-w-sm md:max-w-xl object-contain mix-blend-screen"
+              style={{ filter: "invert(1) grayscale(1) brightness(3)" }}
+            />
+          </div>
 
           <p className="text-display-sm font-normal tracking-wide text-white/50 max-w-xl text-center leading-relaxed font-display mb-12">
             The architectural vault for your personal brand library.
@@ -181,7 +204,7 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
       </div>
 
       {/* Philosophy / Features Section */}
-      <div className="relative z-10 bg-black py-32 px-6">
+      <div className="relative z-10 bg-black py-24 px-6">
         <div className="max-w-6xl mx-auto">
           {/* Philosophy Statement */}
           <div className="mb-32 text-center">

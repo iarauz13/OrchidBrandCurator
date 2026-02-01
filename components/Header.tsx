@@ -8,6 +8,7 @@ import { MailIcon } from './icons/MailIcon';
 import { FolderIcon } from './icons/FolderIcon';
 import { ChevronDownIcon } from './icons/ChevronDownIcon';
 import { OrchidIcon } from './icons/OrchidIcon';
+import BrandLogo from './BrandLogo';
 import { LIMITS } from '../utils/validation';
 
 type ActiveView = 'collection' | 'folio' | 'brand' | 'social' | 'profile';
@@ -42,7 +43,7 @@ const NavItem: React.FC<{
       color: isActive ? theme.textPrimary : theme.textSecondary
     }}
     className={`flex items-center gap-tight-md px-medium-sm py-tight-md 
-      rounded-md transition-colors text-small font-semibold relative 
+      rounded-md transition-colors text-base font-semibold relative 
       hover:opacity-80`}
   >
     {icon}
@@ -93,7 +94,7 @@ const Header: React.FC<HeaderProps> = ({
   const initials = [user.firstName?.[0], user.lastName?.[0]].filter(Boolean).join('').toUpperCase() || 'GU';
 
   return (
-    <header className="mb-large-lg">
+    <header className="mb-medium-lg">
       <div className="flex justify-between items-center">
         <div>
           <h1
@@ -101,10 +102,7 @@ const Header: React.FC<HeaderProps> = ({
               font-display transition-colors duration-500 leading-tight"
             style={{ color: theme.textPrimary }}
           >
-            <div className="flex items-center gap-3">
-              <span>Orchid</span>
-              <OrchidIcon className="w-8 h-8 text-brand-secondary opacity-80" />
-            </div>
+            <BrandLogo theme={theme} className="h-32 sm:h-44" />
           </h1>
         </div>
         <nav className="flex items-center gap-tight-md sm:gap-medium-lg">
@@ -178,7 +176,7 @@ const Header: React.FC<HeaderProps> = ({
             onClick={onContactClick}
             style={{ color: theme.textSecondary }}
             className="hidden lg:flex items-center gap-tight-md px-medium-sm 
-              py-tight-md rounded-md transition-colors text-small font-semibold 
+              py-tight-md rounded-md transition-colors text-base font-semibold 
               hover:opacity-80"
           >
             <MailIcon className="w-4 h-4" />

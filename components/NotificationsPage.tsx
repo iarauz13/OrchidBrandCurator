@@ -7,26 +7,26 @@ import { UsersIcon } from './icons/UsersIcon';
 import { PlusCircleIcon } from './icons/PlusCircleIcon';
 
 interface NotificationsPageProps {
-  title: string;
-  notifications: AppNotification[];
-  onMarkAllAsRead: () => void;
-  onAcceptShare?: (notification: AppNotification) => void;
-  theme: ThemeConfig;
+    title: string;
+    notifications: AppNotification[];
+    onMarkAllAsRead: () => void;
+    onAcceptShare?: (notification: AppNotification) => void;
+    theme: ThemeConfig;
 }
 
 const timeSince = (date: Date): string => {
-  const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-  let interval = seconds / 31536000;
-  if (interval > 1) return Math.floor(interval) + " years ago";
-  interval = seconds / 2592000;
-  if (interval > 1) return Math.floor(interval) + " months ago";
-  interval = seconds / 86400;
-  if (interval > 1) return Math.floor(interval) + " days ago";
-  interval = seconds / 3600;
-  if (interval > 1) return Math.floor(interval) + " hours ago";
-  interval = seconds / 60;
-  if (interval > 1) return Math.floor(interval) + " minutes ago";
-  return Math.floor(seconds) + " seconds ago";
+    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+    let interval = seconds / 31536000;
+    if (interval > 1) return Math.floor(interval) + " years ago";
+    interval = seconds / 2592000;
+    if (interval > 1) return Math.floor(interval) + " months ago";
+    interval = seconds / 86400;
+    if (interval > 1) return Math.floor(interval) + " days ago";
+    interval = seconds / 3600;
+    if (interval > 1) return Math.floor(interval) + " hours ago";
+    interval = seconds / 60;
+    if (interval > 1) return Math.floor(interval) + " minutes ago";
+    return Math.floor(seconds) + " seconds ago";
 }
 
 const BrandActivityFeed: React.FC<{ notifications: AppNotification[], theme: ThemeConfig }> = ({ notifications, theme }) => {
@@ -51,24 +51,25 @@ const BrandActivityFeed: React.FC<{ notifications: AppNotification[], theme: The
             <div className="flex justify-between items-center mb-6">
                 <h2 className="text-4xl font-light font-display transition-colors" style={{ color: theme.textPrimary }}>Brands Activity</h2>
             </div>
-            
+
             <div className="flex gap-3 px-1 pb-8 overflow-x-auto whitespace-nowrap scrollbar-hide">
                 {filters.map(filter => (
                     <button
                         key={filter.key}
                         onClick={() => setActiveFilter(filter.key)}
-                        style={activeFilter === filter.key ? { backgroundColor: theme.textPrimary, color: theme.background.includes('gradient') ? '#FFF' : theme.textOnAccent } : {}}
-                        className={`flex h-10 shrink-0 cursor-pointer items-center justify-center gap-x-2 rounded-full px-5 transition-all border ${
-                            activeFilter === filter.key
-                                ? 'shadow-sm border-transparent'
-                                : 'bg-brand-surface hover:bg-black/5 text-brand-text-secondary border-brand-border'
-                        }`}
+                        style={activeFilter === filter.key
+                            ? { backgroundColor: theme.textPrimary, color: theme.background }
+                            : { color: theme.textSecondary, borderColor: theme.border }}
+                        className={`flex h-10 shrink-0 cursor-pointer items-center justify-center gap-x-2 rounded-full px-5 transition-all border ${activeFilter === filter.key
+                            ? 'shadow-sm border-transparent'
+                            : 'bg-transparent hover:bg-brand-secondary/10'
+                            }`}
                     >
                         <p className="text-sm font-medium">{filter.label}</p>
                     </button>
                 ))}
             </div>
-            
+
             {filteredNotifications.length > 0 ? (
                 <main className="flex flex-col gap-10">
                     {filteredNotifications.map(notification => (
@@ -86,18 +87,19 @@ const BrandActivityFeed: React.FC<{ notifications: AppNotification[], theme: The
                                 )}
                                 <div className="flex flex-col gap-4 p-6">
                                     <div className="flex flex-col gap-2">
-                                        <h2 className="font-display text-3xl font-semibold leading-tight text-brand-text-primary">{notification.title}</h2>
-                                        <p className="text-base text-brand-text-secondary leading-relaxed">{notification.message}</p>
+                                        <h2 className="font-display text-3xl font-semibold leading-tight" style={{ color: theme.textOnSurfacePrimary }}>{notification.title}</h2>
+                                        <p className="text-base leading-relaxed" style={{ color: theme.textOnSurfaceSecondary }}>{notification.message}</p>
                                     </div>
                                     {notification.ctaLink && notification.ctaText && (
-                                    <a 
-                                        href={notification.ctaLink} 
-                                        target="_blank" 
-                                        rel="noopener noreferrer"
-                                        className="h-12 w-full cursor-pointer rounded-lg border border-brand-border bg-brand-bg text-base font-semibold text-brand-text-primary transition-all hover:bg-brand-primary hover:text-white flex items-center justify-center shadow-sm"
-                                    >
-                                        <span>{notification.ctaText}</span>
-                                    </a>
+                                        <a
+                                            href={notification.ctaLink}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ color: theme.textOnSurfacePrimary, borderColor: theme.border }}
+                                            className="h-12 w-full cursor-pointer rounded-lg border bg-brand-bg text-base font-semibold transition-all hover:bg-brand-primary hover:text-white flex items-center justify-center shadow-sm"
+                                        >
+                                            <span>{notification.ctaText}</span>
+                                        </a>
                                     )}
                                 </div>
                             </div>
@@ -122,42 +124,42 @@ const BrandActivityFeed: React.FC<{ notifications: AppNotification[], theme: The
 
 const SocialFeed: React.FC<{ notifications: AppNotification[], onMarkAllAsRead: () => void, onAcceptShare?: (n: AppNotification) => void, theme: ThemeConfig }> = ({ notifications, onMarkAllAsRead, onAcceptShare, theme }) => {
     const unreadCount = notifications.filter(n => !n.read).length;
-    
+
     return (
         <div className="max-w-4xl mx-auto min-h-[60vh]">
-             <div className="flex justify-between items-center mb-8">
+            <div className="flex justify-between items-center mb-8">
                 <h2 className="text-4xl font-light font-display transition-colors" style={{ color: theme.textPrimary }}>Social Feed</h2>
                 {unreadCount > 0 && (
-                  <button
-                    onClick={onMarkAllAsRead}
-                    style={{ color: theme.accent }}
-                    className="text-sm font-medium hover:underline transition-all"
-                  >
-                    Mark all as read
-                  </button>
+                    <button
+                        onClick={onMarkAllAsRead}
+                        style={{ color: theme.accent }}
+                        className="text-sm font-medium hover:underline transition-all"
+                    >
+                        Mark all as read
+                    </button>
                 )}
             </div>
             {notifications.length > 0 ? (
                 <div className="space-y-4">
                     {notifications.map(notification => (
-                        <div 
+                        <div
                             key={notification.id}
                             className={`p-5 bg-brand-surface rounded-xl border flex items-start gap-4 transition-all duration-300 ${notification.read ? 'border-brand-border opacity-80' : 'border-brand-secondary/30 bg-brand-secondary/5 shadow-sm'}`}
                         >
                             <div className="flex-shrink-0 w-12 h-12 bg-brand-bg rounded-full flex items-center justify-center overflow-hidden border border-brand-border shadow-inner">
                                 {notification.brandImageUrl ? (
-                                     <img src={notification.brandImageUrl} className="w-full h-full object-cover" alt="Sender" />
+                                    <img src={notification.brandImageUrl} className="w-full h-full object-cover" alt="Sender" />
                                 ) : (
-                                     <div className="text-brand-secondary"><UsersIcon className="w-6 h-6" /></div>
+                                    <div className="text-brand-secondary"><UsersIcon className="w-6 h-6" /></div>
                                 )}
                             </div>
                             <div className="flex-grow">
                                 <div className="flex justify-between items-start mb-1">
-                                    <h3 className="font-bold text-brand-text-primary">{notification.title}</h3>
-                                    <p className="text-[10px] font-bold text-brand-text-secondary/50 uppercase tracking-tighter">{timeSince(notification.timestamp)}</p>
+                                    <h3 className="font-bold" style={{ color: notification.read ? theme.textOnSurfacePrimary : theme.textPrimary }}>{notification.title}</h3>
+                                    <p className="text-[10px] font-bold opacity-50 uppercase tracking-tighter" style={{ color: notification.read ? theme.textOnSurfaceSecondary : theme.textSecondary }}>{timeSince(notification.timestamp)}</p>
                                 </div>
-                                <p className="text-brand-text-secondary text-sm leading-relaxed">{notification.message}</p>
-                                
+                                <p className="text-sm leading-relaxed" style={{ color: notification.read ? theme.textOnSurfaceSecondary : theme.textSecondary }}>{notification.message}</p>
+
                                 {notification.payload && (
                                     <div className="mt-4 p-4 bg-brand-surface rounded-lg border border-brand-border group shadow-subtle hover:border-brand-secondary transition-colors">
                                         <div className="flex gap-4 mb-3">
@@ -167,12 +169,12 @@ const SocialFeed: React.FC<{ notifications: AppNotification[], onMarkAllAsRead: 
                                                 <div className="w-20 h-20 bg-brand-bg rounded-md flex items-center justify-center border border-brand-border"><TagIcon /></div>
                                             )}
                                             <div className="flex flex-col justify-center">
-                                                <p className="font-bold font-display text-xl text-brand-text-primary">{notification.payload.store.store_name}</p>
-                                                <p className="text-[10px] font-bold text-brand-text-secondary/60 uppercase tracking-widest">{notification.payload.store.city}, {notification.payload.store.country}</p>
+                                                <p className="font-bold font-display text-xl" style={{ color: theme.textOnSurfacePrimary }}>{notification.payload.store.store_name}</p>
+                                                <p className="text-[10px] font-bold opacity-60 uppercase tracking-widest" style={{ color: theme.textOnSurfaceSecondary }}>{notification.payload.store.city}, {notification.payload.store.country}</p>
                                             </div>
                                         </div>
                                         {onAcceptShare && (
-                                            <button 
+                                            <button
                                                 onClick={() => onAcceptShare(notification)}
                                                 className="w-full flex items-center justify-center gap-2 text-sm bg-brand-primary text-white px-4 py-2.5 rounded-lg hover:bg-brand-secondary transition-all font-semibold"
                                             >
@@ -202,15 +204,15 @@ const SocialFeed: React.FC<{ notifications: AppNotification[], onMarkAllAsRead: 
 
 
 const NotificationsPage: React.FC<NotificationsPageProps> = ({ title, notifications, onMarkAllAsRead, onAcceptShare, theme }) => {
-  if (title === 'Brands Activity') {
-    return <BrandActivityFeed notifications={notifications} theme={theme} />;
-  }
-  
-  if (title === 'Social Feed') {
-      return <SocialFeed notifications={notifications} onMarkAllAsRead={onMarkAllAsRead} onAcceptShare={onAcceptShare} theme={theme} />
-  }
+    if (title === 'Brands Activity') {
+        return <BrandActivityFeed notifications={notifications} theme={theme} />;
+    }
 
-  return <div className="text-center py-20 font-display text-2xl">Page not found.</div>;
+    if (title === 'Social Feed') {
+        return <SocialFeed notifications={notifications} onMarkAllAsRead={onMarkAllAsRead} onAcceptShare={onAcceptShare} theme={theme} />
+    }
+
+    return <div className="text-center py-20 font-display text-2xl">Page not found.</div>;
 };
 
 export default NotificationsPage;

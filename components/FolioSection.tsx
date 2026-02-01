@@ -75,12 +75,14 @@ const FolioSection: React.FC<FolioSectionProps> = ({
         <div>
           <h2 className="text-display-md font-semibold font-display 
             leading-tight">Folio Registry</h2>
-          <p className="text-base text-brand-text-secondary mt-tight-md 
-            font-normal">
-            Organize items into curated architectural binders.
+          <p
+            className="text-base mt-tight-md font-normal opacity-80"
+            style={{ color: theme.textSecondary }}
+          >
+            Create distinct collections to organize your brands by project, season, or client.
           </p>
         </div>
-        <button 
+        <button
           onClick={() => setIsAdding(true)}
           className="flex items-center gap-tight-md px-medium-lg py-medium-sm 
             bg-brand-primary text-white rounded-full font-semibold text-small 
@@ -96,8 +98,8 @@ const FolioSection: React.FC<FolioSectionProps> = ({
         xl:grid-cols-4 gap-large-sm">
         {folios.map(folio => (
           <div key={folio.id} onClick={() => setActiveFolioId(folio.id)}>
-            <FolioBinder 
-              folio={folio} 
+            <FolioBinder
+              folio={folio}
               storeCount={folio.storeIds.length}
               onAddClick={(e) => handleOpenSelection(folio.id, e)}
               onDeleteClick={(e) => handleDeleteRequest(folio, e)}
@@ -132,10 +134,10 @@ const FolioSection: React.FC<FolioSectionProps> = ({
                   font-semibold text-brand-text-secondary mb-tight-md">
                   Binder Label
                 </label>
-                <input 
+                <input
                   autoFocus
                   required
-                  type="text" 
+                  type="text"
                   value={newFolioName}
                   onChange={(e) => setNewFolioName(e.target.value)}
                   placeholder="e.g., Summer Favorites"
@@ -152,14 +154,14 @@ const FolioSection: React.FC<FolioSectionProps> = ({
                     type="button"
                     onClick={() => setSelectedThemeId(p.id)}
                     className={`h-10 rounded-lg border-2 
-                      ${selectedThemeId === p.id 
-                        ? 'border-brand-primary scale-110 shadow-md' 
+                      ${selectedThemeId === p.id
+                        ? 'border-brand-primary scale-110 shadow-md'
                         : 'border-transparent'}`}
                     style={{ background: p.background }}
                   />
                 ))}
               </div>
-              <button 
+              <button
                 type="submit"
                 className="w-full py-medium-lg bg-brand-primary text-white 
                   font-semibold rounded-xl shadow-lg hover:opacity-90 
@@ -173,11 +175,11 @@ const FolioSection: React.FC<FolioSectionProps> = ({
       )}
 
       {activeFolio && (
-        <FolioBinderDetails 
+        <FolioBinderDetails
           folio={activeFolio}
           stores={stores}
           onClose={() => setActiveFolioId(null)}
-          onRemoveFromFolio={(storeId) => 
+          onRemoveFromFolio={(storeId) =>
             onRemoveFromFolio(storeId, activeFolio.id)
           }
           onClearFolio={() => onClearFolio(activeFolio.id)}
@@ -187,7 +189,7 @@ const FolioSection: React.FC<FolioSectionProps> = ({
       )}
 
       {activeFolio && isSelecting && (
-        <FolioSelectionModal 
+        <FolioSelectionModal
           isOpen={isSelecting}
           onClose={() => setIsSelecting(false)}
           allStores={stores}
@@ -202,7 +204,7 @@ const FolioSection: React.FC<FolioSectionProps> = ({
       )}
 
       {folioToDelete && (
-        <ConfirmationModal 
+        <ConfirmationModal
           isOpen={!!folioToDelete}
           onClose={() => setFolioToDelete(null)}
           onConfirm={confirmDeleteFolio}

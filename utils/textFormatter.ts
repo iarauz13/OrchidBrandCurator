@@ -10,7 +10,7 @@ export const getStoreGroupingKey = (name: string): string => {
   if (!name) return '#';
   const trimmed = name.trim();
   if (trimmed.length === 0) return '#';
-  
+
   const firstChar = trimmed.charAt(0);
   // Strictly check if the first character is a letter
   if (/^[a-zA-Z]/.test(firstChar)) {
@@ -44,7 +44,7 @@ export const formatDescription = (text: string): string => {
   let formattedText = text.trim();
 
   const letters = formattedText.replace(/[^a-zA-Z]/g, '');
-  if (letters.length > 10) { 
+  if (letters.length > 10) {
     const upperCaseLetters = letters.replace(/[^A-Z]/g, '');
     const upperCaseRatio = upperCaseLetters.length / letters.length;
     if (upperCaseRatio > 0.7) {
@@ -76,4 +76,23 @@ export const isMeaningfulDescription = (description: string): boolean => {
   if (placeholders.includes(lowercased)) return false;
   const words = lowercased.split(/\s+/).filter(Boolean);
   return lowercased.length > 15 && words.length > 3;
+};
+
+/**
+ * Capitalizes the first letter of each word.
+ * e.g. "zara home" -> "Zara Home"
+ */
+export const toTitleCase = (text: string): string => {
+  if (!text) return '';
+  return text.toLowerCase().replace(/(?:^|\s|-)\S/g, (char) => char.toUpperCase());
+};
+
+/**
+ * Capitalizes the first letter of the sentence and forces the rest to lowercase.
+ * e.g. "WE MAKE CLOTHES" -> "We make clothes"
+ */
+export const toSentenceCase = (text: string): string => {
+  if (!text) return '';
+  const lower = text.toLowerCase().trim();
+  return lower.charAt(0).toUpperCase() + lower.slice(1);
 };

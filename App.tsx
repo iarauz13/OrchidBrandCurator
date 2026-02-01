@@ -506,7 +506,7 @@ const App: React.FC = () => {
           <main className="flex-grow min-w-0">
             {activeView === 'collection' && activeCollection && (
               <>
-                <div className="flex justify-between items-center mb-8">
+                <div className="flex justify-between items-center mb-4">
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setIsFilterPanelOpen(true)}

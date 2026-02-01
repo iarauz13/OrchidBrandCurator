@@ -1,0 +1,8 @@
+Store Name,Website,Description,Tags
+"Simple Store",simple.com,"Simple description",tag1
+"Complex, Store",complex.com,"Description with, commas",tag2
+"Quote ""Store""",quote.com,"Description with ""escaped"" quotes",tag3
+"Multiline
+Store",multiline.com,"Description with
+newlines",tag4
+"Bad Quote Start" broke,broken.com,oops,tag5

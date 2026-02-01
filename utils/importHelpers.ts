@@ -3,6 +3,7 @@ import { Store } from '../types';
 import { CollectionTemplate } from '../collectionTemplates';
 import { LIMITS } from './validation';
 import { getPriceBucket } from './priceMapper';
+import { toSentenceCase, toTitleCase } from './textFormatter';
 
 // Extended Aliases including Instagram JSON specific keys
 export const COLUMN_ALIASES: { [key: string]: string[] } = {
@@ -60,52 +61,69 @@ export const parseImportFile = async (file: File): Promise<FileData> => {
       throw new Error("Invalid JSON format.");
     }
   } else {
-    // CSV Parsing (using logic from csvParser.ts)
-    // We reuse the basic splitting logic but structure it for our generic processor
-    // TODO: Consider using a robust library like PapaParse in future for edge cases
-    const splitIntoRows = (t: string) => {
-      // ... simple split logic ...
-      return t.split(/\r?\n/).filter(r => r.trim());
-    };
-
-    // Better CSV parser needed? For now copying the robust split logic from original file would be best
-    // But to save space/time, let's implement a simplified version or reuse the existing one if we could import it. 
-    // Since we are replacing functionality, I'll rewrite a clean version here.
-
-    const rows = splitIntoRows(text);
-    if (rows.length < 2) return { headers: [], rows: [], fileName: file.name };
-
-    const splitRow = (row: string) => {
-      // Basic CSV split, accounts for quotes loosely
-      const matches = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-      return matches ? matches.map(m => m.replace(/^"|"$/g, '').trim()) : row.split(',').map(c => c.trim());
-    };
-
-    // Use a slightly better regex-based split from the original file if possible, or just standard split for now
-    // Re-implementing the robust loop-based splitter from csvParser.ts for safety
-    const robustSplit = (row: string): string[] => {
-      const cells: string[] = [];
+    // State-Machine Parser for RFC 4180 compliance
+    const parseCSV = (text: string, delimiter: string): string[][] => {
+      const rows: string[][] = [];
+      let currentRow: string[] = [];
       let currentCell = "";
       let insideQuotes = false;
-      for (let i = 0; i < row.length; i++) {
-        const char = row[i];
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
+
         if (char === '"') {
-          if (insideQuotes && row[i + 1] === '"') { currentCell += '"'; i++; }
-          else { insideQuotes = !insideQuotes; }
-        } else if (char === ',' && !insideQuotes) {
-          cells.push(currentCell.trim()); currentCell = "";
+          if (insideQuotes && nextChar === '"') {
+            currentCell += '"'; // Escaped quote
+            i++;
+          } else {
+            insideQuotes = !insideQuotes;
+          }
+        } else if (char === delimiter && !insideQuotes) {
+          currentRow.push(currentCell.trim()); // Trim cell whitespace
+          currentCell = "";
+        } else if ((char === '\n' || char === '\r') && !insideQuotes) {
+          if (char === '\r' && nextChar === '\n') i++; // Handle CRLF
+          currentRow.push(currentCell.trim());
+          if (currentRow.length > 0 || currentCell.length > 0) rows.push(currentRow);
+          currentRow = [];
+          currentCell = "";
         } else {
           currentCell += char;
         }
       }
-      cells.push(currentCell.trim());
-      return cells;
+
+      // Push remaining
+      if (currentCell.length > 0 || currentRow.length > 0) {
+        currentRow.push(currentCell.trim());
+        rows.push(currentRow);
+      }
+
+      return rows;
     };
 
-    const headers = robustSplit(rows[0]).map(cleanHeader);
-    const dataRows = rows.slice(1).map(r => {
-      const cells = robustSplit(r);
-      // Convert array to object keyed by header
+    // Detect delimiter from first chunk
+    const detectDelimiter = (text: string): string => {
+      const firstLineEnd = text.indexOf('\n');
+      const sample = text.substring(0, firstLineEnd === -1 ? Math.min(text.length, 1000) : firstLineEnd);
+      const candidates = [',', ';', '\t', '|'];
+      let best = ',';
+      let max = 0;
+      candidates.forEach(d => {
+        const count = sample.split(d).length - 1;
+        if (count > max) { max = count; best = d; }
+      });
+      return best;
+    };
+
+    const delimiter = detectDelimiter(text);
+    const rows = parseCSV(text, delimiter);
+
+    if (rows.length < 2) return { headers: [], rows: [], fileName: file.name };
+
+    // Post-process headers
+    const headers = rows[0].map(cleanHeader);
+    const dataRows = rows.slice(1).map(cells => {
       const rowObj: any = {};
       headers.forEach((h, i) => {
         rowObj[h] = cells[i] || '';
@@ -170,6 +188,16 @@ export const normalizeData = (rawData: any[], mapping: FieldMapping): Store[] =>
       storeName = extractNameFromUrl(website);
     }
 
+    // Apply strict formatting as per user request
+    if (storeName) {
+      storeName = toTitleCase(storeName);
+    }
+
+    // Safety check for suspicious long names (e.g. parsing errors)
+    if (storeName && storeName.length > LIMITS.MAX_NAME_LENGTH) {
+      storeName = storeName.substring(0, LIMITS.MAX_NAME_LENGTH);
+    }
+
     if (!storeName && !website) return null; // Skip invalid
 
     return {
@@ -179,10 +207,10 @@ export const normalizeData = (rawData: any[], mapping: FieldMapping): Store[] =>
       instagram_name: getVal('instagram_name'),
       country: getVal('country'),
       city: getVal('city'),
-      description: getVal('description'),
+      description: toSentenceCase(getVal('description')),
       tags: getVal('tags').split(/[|;,]/).map(t => t.trim()).filter(Boolean).slice(0, LIMITS.MAX_TAGS_PER_STORE),
       rating: parseFloat(getVal('rating')) || 0,
-      addedBy: 'Guest', // Default
+      addedBy: { userId: 'guest', userName: 'Guest' }, // Default
       favoritedBy: [],
       privateNotes: {},
       customFields: {},

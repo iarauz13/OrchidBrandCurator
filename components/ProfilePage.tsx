@@ -32,24 +32,60 @@ const DataManagementRow: React.FC<{
   title: string;
   description: string;
   onClick: () => void;
-}> = ({ icon, title, description, onClick }) => (
-  <button onClick={onClick} className="group flex items-center gap-5 bg-brand-surface rounded-xl p-4 min-h-[72px] transition-all duration-300 hover:bg-black/5 w-full text-left border border-brand-border shadow-sm">
-    <div className="flex items-center gap-5 flex-1">
-      <div className="text-brand-text-secondary flex items-center justify-center rounded-lg bg-brand-bg shrink-0 size-12 group-hover:bg-brand-border transition-colors">
-        {icon}
+  theme: ThemeConfig;
+}> = ({ icon, title, description, onClick, theme }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{
+        backgroundColor: isHovered ? 'transparent' : undefined,
+        borderColor: isHovered ? theme.border : undefined
+      }}
+      className="group flex items-center gap-5 bg-brand-surface rounded-xl p-4 min-h-[72px] transition-all duration-300 w-full text-left border border-brand-border shadow-sm"
+    >
+      <div className="flex items-center gap-5 flex-1">
+        <div
+          className="flex items-center justify-center rounded-lg shrink-0 size-12 transition-colors"
+          style={{
+            backgroundColor: isHovered ? 'transparent' : undefined,
+            color: isHovered ? theme.textSecondary : undefined
+          }}
+        >
+          {/* Default state uses class utility colors which are overridden by inline styles on hover */}
+          <div className={`${isHovered ? '' : 'text-brand-text-secondary bg-brand-bg'} flex items-center justify-center rounded-lg size-12`}>
+            {icon}
+          </div>
+        </div>
+        <div className="flex flex-col justify-center">
+          <p
+            className="text-base font-medium leading-normal transition-colors"
+            style={{ color: isHovered ? theme.textPrimary : theme.textOnSurfacePrimary }}
+          >
+            {title}
+          </p>
+          <p
+            className="text-sm font-light leading-normal transition-colors"
+            style={{ color: isHovered ? theme.textSecondary : theme.textOnSurfaceSecondary }}
+          >
+            {description}
+          </p>
+        </div>
       </div>
-      <div className="flex flex-col justify-center">
-        <p className="text-brand-text-on-surface-primary text-base font-medium leading-normal">{title}</p>
-        <p className="text-brand-text-on-surface-secondary text-sm font-light leading-normal">{description}</p>
+      <div className="shrink-0">
+        <div
+          className="flex size-7 items-center justify-center transition-colors"
+          style={{ color: isHovered ? theme.textSecondary : undefined }}
+        >
+          <ChevronRightIcon className={`transition-transform duration-300 group-hover:translate-x-1 ${!isHovered ? 'text-brand-text-on-surface-secondary/50' : ''}`} />
+        </div>
       </div>
-    </div>
-    <div className="shrink-0">
-      <div className="text-brand-text-on-surface-secondary/50 flex size-7 items-center justify-center">
-        <ChevronRightIcon className="transition-transform duration-300 group-hover:translate-x-1" />
-      </div>
-    </div>
-  </button>
-);
+    </button>
+  );
+};
 
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser, theme, onSetTheme, collections, onOpenImportModal, onAddStoreClick, onLoadSampleData, onClearCollection, onRemoveCollection }) => {
@@ -215,12 +251,12 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser, theme, on
           Data Management
         </h2>
         <div className="space-y-3">
-          <DataManagementRow icon={<UploadIcon />} title="Import from CSV" description="Replace current collection with items from a CSV file." onClick={() => onOpenImportModal('import')} />
-          <DataManagementRow icon={<UploadIcon />} title="Append from CSV" description="Add and update items from a CSV to your collection." onClick={() => onOpenImportModal('append')} />
-          <DataManagementRow icon={<PlusCircleIcon />} title="Add Item Manually" description="Add a single new item to your collection." onClick={onAddStoreClick} />
-          <DataManagementRow icon={<DatabaseIcon />} title="Load Sample Data" description="Explore the app with a sample Fashion Brands dataset." onClick={handleLoadSampleDataWrapped} />
-          <DataManagementRow icon={<TrashIcon />} title="Clear Collection" description="Choose a collection to reset and delete all items within it." onClick={() => setClearFlowState('selecting')} />
-          <DataManagementRow icon={<TrashIcon />} title="Remove Collection" description="Remove an entire collection from the app permanently." onClick={() => setRemoveFlowState('selecting')} />
+          <DataManagementRow icon={<UploadIcon />} title="Import from CSV" description="Replace current collection with items from a CSV file." onClick={() => onOpenImportModal('import')} theme={theme} />
+          <DataManagementRow icon={<UploadIcon />} title="Append from CSV" description="Add and update items from a CSV to your collection." onClick={() => onOpenImportModal('append')} theme={theme} />
+          <DataManagementRow icon={<PlusCircleIcon />} title="Add Item Manually" description="Add a single new item to your collection." onClick={onAddStoreClick} theme={theme} />
+          <DataManagementRow icon={<DatabaseIcon />} title="Load Sample Data" description="Explore the app with a sample Fashion Brands dataset." onClick={handleLoadSampleDataWrapped} theme={theme} />
+          <DataManagementRow icon={<TrashIcon />} title="Clear Collection" description="Choose a collection to reset and delete all items within it." onClick={() => setClearFlowState('selecting')} theme={theme} />
+          <DataManagementRow icon={<TrashIcon />} title="Remove Collection" description="Remove an entire collection from the app permanently." onClick={() => setRemoveFlowState('selecting')} theme={theme} />
         </div>
       </div>
 
