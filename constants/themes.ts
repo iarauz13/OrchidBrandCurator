@@ -32,34 +32,34 @@ export const THEME_PRESETS: ThemeConfig[] = [
     isDarkBackground: true
   },
   {
-    id: 'morning-mist',
-    name: 'Morning Mist',
-    background: 'linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%)',
-    accent: '#6d28d9',
-    textOnAccent: '#FFFFFF',
-    textPrimary: '#1e1b4b',
-    textSecondary: '#4338ca',
-    isDarkBackground: false
-  },
-  {
-    id: 'desert-dusk',
-    name: 'Desert Dusk',
-    background: 'linear-gradient(70deg, #d9a7c7 0%, #fffcdc 100%)',
-    accent: '#be185d',
-    textOnAccent: '#FFFFFF',
-    textPrimary: '#500724',
-    textSecondary: '#9d174d',
-    isDarkBackground: false
-  },
-  {
-    id: 'cool-slate',
-    name: 'Cool Slate',
-    background: 'linear-gradient(to right, #434343 0%, #000000 100%)',
-    accent: '#f4f4f5',
-    textOnAccent: '#000000',
-    textPrimary: '#ffffff',
-    textSecondary: '#a1a1aa',
+    id: 'velvet-orchid',
+    name: 'Velvet Orchid',
+    background: 'linear-gradient(to right, #24243e, #302b63, #0f0c29)',
+    accent: '#d8b4fe',
+    textOnAccent: '#0f0c29',
+    textPrimary: '#f3e8ff',
+    textSecondary: '#c084fc',
     isDarkBackground: true
+  },
+  {
+    id: 'botanical-sanctuary',
+    name: 'Botanical Sanctuary',
+    background: 'linear-gradient(135deg, #134e5e 0%, #71b280 100%)',
+    accent: '#a7f3d0',
+    textOnAccent: '#064e3b',
+    textPrimary: '#ecfdf5',
+    textSecondary: '#6ee7b7',
+    isDarkBackground: true
+  },
+  {
+    id: 'blush-petal',
+    name: 'Blush Petal',
+    background: 'linear-gradient(to right, #ffecd2 0%, #fcb69f 100%)',
+    accent: '#be123c',
+    textOnAccent: '#fff1f2',
+    textPrimary: '#881337',
+    textSecondary: '#fb7185',
+    isDarkBackground: false
   }
 ];
 
