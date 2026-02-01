@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orchid</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'brand-bg': '#F8F7F2',
+              'brand-surface': '#FFFFFF',
+              'brand-primary': '#1a1a1a',
+              'brand-secondary': '#eab3a3',
+              'brand-text-primary': '#1a1a1a',
+              'brand-text-secondary': '#6b7280',
+              'brand-border': '#E5E7EB',
+              'brand-link': '#1a1a1a',
+            },
+            fontFamily: {
+              sans: ['"Inter"', 'sans-serif'],
+              display: ['"Cormorant Garamond"', 'serif'],
+            },
+            fontSize: {
+              'small': '0.75rem',
+              'base': '1rem',
+              'large': '1.25rem',
+              'display-sm': '1.5rem',
+              'display-md': '2.25rem',
+              'display-lg': '4rem',
+            },
+            fontWeight: {
+              'normal': '400',
+              'semibold': '600',
+            },
+            lineHeight: {
+              'tight': '1.1',
+              'relaxed': '1.6',
+            },
+            spacing: {
+              'tight-sm': '0.25rem',
+              'tight-md': '0.5rem',
+              'medium-sm': '1rem',
+              'medium-lg': '1.5rem',
+              'large-sm': '3rem',
+              'large-lg': '4rem',
+              'extra-large': '8rem',
+            },
+            borderRadius: {
+              'lg': '0.75rem',
+              'xl': '1rem',
+              '2xl': '1.5rem',
+            },
+            boxShadow: {
+              'subtle': '0 4px 12px rgba(0,0,0,0.05)',
+              'subtle-hover': '0 8px 20px rgba(0,0,0,0.07)',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      @keyframes silk-flow {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+      .silk-bg {
+        background: linear-gradient(-45deg, #09203f, #1a1a24, #0d0d15, #08080a);
+        background-size: 400% 400%;
+        animation: silk-flow 15s ease infinite;
+      }
+      .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+      .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+      
+      .shimmer-bg {
+        background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+      }
+      @keyframes shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.3.1",
+    "react-dom": "https://esm.sh/react-dom@18.3.1",
+    "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
+    "react/": "https://esm.sh/react@18.3.1/",
+    "react-dom/": "https://esm.sh/react-dom@18.3.1/",
+    "gsap": "https://esm.sh/gsap@3.12.5",
+    "gsap/": "https://esm.sh/gsap@3.12.5/",
+    "gsap/ScrollTrigger": "https://esm.sh/gsap@3.12.5/ScrollTrigger",
+    "@gsap/react": "https://esm.sh/@gsap/react@2.1.0?external=react,react-dom",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.27.0",
+    "leaflet": "https://aistudiocdn.com/leaflet@^1.9.4",
+    "react-leaflet": "https://aistudiocdn.com/react-leaflet@^4.2.1",
+    "firebase/app": "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js",
+    "firebase/auth": "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js",
+    "firebase/firestore": "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js",
+    "firebase/": "https://aistudiocdn.com/firebase@^12.6.0/",
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
+  }
+}
+</script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-[#0a0a0c] text-brand-text-primary overflow-x-hidden">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
