@@ -465,7 +465,13 @@ const App: React.FC = () => {
   return (
     <div
       className="min-h-screen transition-colors duration-1000"
-      style={{ background: theme.background, color: theme.textPrimary }}
+      style={{
+        background: theme.background,
+        color: theme.textPrimary,
+        // @ts-ignore - Injecting CSS variables
+        '--text-on-surface-primary': theme.textOnSurfacePrimary,
+        '--text-on-surface-secondary': theme.textOnSurfaceSecondary
+      } as React.CSSProperties}
     >
       <div className="max-w-[1600px] mx-auto px-6 py-10">
         <Header

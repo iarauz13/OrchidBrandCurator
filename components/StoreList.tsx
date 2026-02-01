@@ -131,22 +131,21 @@ const StoreList: React.FC<StoreListProps> = ({
   return (
     <div className="relative">
       <div className="fixed right-2 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-0.5 pointer-events-none hidden sm:flex">
-         <div className="bg-brand-surface/80 backdrop-blur-md rounded-full py-3 px-1.5 shadow-subtle border border-brand-border pointer-events-auto flex flex-col items-center gap-0.5 overflow-y-auto max-h-[80vh]">
-            {ALPHABET.map(char => {
-                const isActive = existingLetters.has(char);
-                return (
-                    <button
-                        key={char}
-                        onClick={() => isActive && handleScrollTo(char)}
-                        disabled={!isActive}
-                        style={isActive ? { color: theme.accent } : {}}
-                        className={`text-[10px] w-5 h-5 flex items-center justify-center rounded-full transition-all duration-200 font-medium ${isActive ? 'hover:bg-brand-primary hover:text-brand-surface cursor-pointer font-bold' : 'text-brand-text-secondary/30 cursor-default'}`}
-                    >
-                        {char}
-                    </button>
-                );
-            })}
-         </div>
+        <div className="bg-brand-surface/80 backdrop-blur-md rounded-full py-3 px-1.5 shadow-subtle border border-brand-border pointer-events-auto flex flex-col items-center gap-0.5 overflow-y-auto max-h-[80vh]">
+          {ALPHABET.map(char => {
+            const isActive = existingLetters.has(char);
+            return (
+              <button
+                key={char}
+                onClick={() => isActive && handleScrollTo(char)}
+                disabled={!isActive}
+                className={`text-[10px] w-5 h-5 flex items-center justify-center rounded-full transition-all duration-200 font-medium ${isActive ? 'text-brand-text-on-surface-primary hover:bg-brand-primary hover:text-brand-surface cursor-pointer font-bold' : 'text-brand-text-on-surface-secondary/40 cursor-default'}`}
+              >
+                {char}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pr-0 sm:pr-8">
@@ -154,11 +153,11 @@ const StoreList: React.FC<StoreListProps> = ({
           const letter = getStoreGroupingKey(store.store_name);
           let anchorId = undefined;
           if (!assignedAnchors.has(letter)) {
-              assignedAnchors.add(letter);
-              anchorId = `alpha-anchor-${letter}`;
+            assignedAnchors.add(letter);
+            anchorId = `alpha-anchor-${letter}`;
           }
           return (
-            <div 
+            <div
               key={store.id}
               className="animate-in fade-in slide-in-from-bottom-4 duration-700 fill-mode-both"
               style={{ animationDelay: `${(index % CHUNK_SIZE) * 60}ms` }}
@@ -190,17 +189,17 @@ const StoreList: React.FC<StoreListProps> = ({
         })}
       </div>
 
-      <div 
-        ref={observerTarget} 
+      <div
+        ref={observerTarget}
         className="h-20 w-full flex items-center justify-center mt-8 opacity-40 italic font-display text-sm"
       >
         {visibleCount < stores.length ? "Gathering more archival records..." : "End of registry reached."}
       </div>
 
       {quickLookStore && (
-        <QuickLookModal 
-          store={quickLookStore} 
-          onClose={() => setQuickLookStore(null)} 
+        <QuickLookModal
+          store={quickLookStore}
+          onClose={() => setQuickLookStore(null)}
           theme={theme}
         />
       )}

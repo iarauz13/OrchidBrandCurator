@@ -21,6 +21,8 @@ export interface ThemeConfig {
   textOnAccent: string; // Hex for text sitting on accents
   textPrimary: string;  // Explicit primary text color
   textSecondary: string; // Hierarchical text color (tinted by background, not generic grey)
+  textOnSurfacePrimary: string; // Text color for white surfaces/cards (high contrast)
+  textOnSurfaceSecondary: string; // Secondary text for white surfaces
   isDarkBackground: boolean; // Pre-calculated to ensure accessibility
 }
 

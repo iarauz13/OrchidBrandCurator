@@ -39,12 +39,12 @@ const DataManagementRow: React.FC<{
         {icon}
       </div>
       <div className="flex flex-col justify-center">
-        <p className="text-brand-text-primary text-base font-medium leading-normal">{title}</p>
-        <p className="text-brand-text-secondary text-sm font-light leading-normal">{description}</p>
+        <p className="text-brand-text-on-surface-primary text-base font-medium leading-normal">{title}</p>
+        <p className="text-brand-text-on-surface-secondary text-sm font-light leading-normal">{description}</p>
       </div>
     </div>
     <div className="shrink-0">
-      <div className="text-brand-text-secondary/50 flex size-7 items-center justify-center">
+      <div className="text-brand-text-on-surface-secondary/50 flex size-7 items-center justify-center">
         <ChevronRightIcon className="transition-transform duration-300 group-hover:translate-x-1" />
       </div>
     </div>
@@ -193,8 +193,8 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser, theme, on
 
             <div className="pt-4 flex justify-end items-center gap-3">
               <div className="flex items-center gap-2 mr-auto">
-                <button onClick={undo} disabled={!canUndo} className="p-2 bg-brand-bg border border-brand-border rounded-lg hover:border-[#6b7280]/50 disabled:opacity-50 transition-colors"><UndoIcon /></button>
-                <button onClick={redo} disabled={!canRedo} className="p-2 bg-brand-bg border border-brand-border rounded-lg hover:border-[#6b7280]/50 disabled:opacity-50 transition-colors"><RedoIcon /></button>
+                <button onClick={undo} disabled={!canUndo} className="p-2 bg-brand-bg border border-brand-border rounded-lg hover:border-[#6b7280]/50 disabled:opacity-50 transition-colors text-brand-text-on-surface-primary"><UndoIcon /></button>
+                <button onClick={redo} disabled={!canRedo} className="p-2 bg-brand-bg border border-brand-border rounded-lg hover:border-[#6b7280]/50 disabled:opacity-50 transition-colors text-brand-text-on-surface-primary"><RedoIcon /></button>
               </div>
               <button onClick={handleResetChanges} disabled={!hasChanges} className="px-6 py-2.5 bg-brand-border font-bold rounded-xl hover:opacity-80 disabled:opacity-50 text-[#1a1a1a] transition-all text-sm">Reset</button>
               <button

@@ -19,6 +19,8 @@ export const THEME_PRESETS: ThemeConfig[] = [
     textOnAccent: '#FFFFFF',
     textPrimary: '#4a3728',
     textSecondary: '#8a7161',
+    textOnSurfacePrimary: '#4a3728',
+    textOnSurfaceSecondary: '#8a7161',
     isDarkBackground: false
   },
   {
@@ -29,6 +31,8 @@ export const THEME_PRESETS: ThemeConfig[] = [
     textOnAccent: '#0f172a',
     textPrimary: '#e0f2fe',
     textSecondary: '#7dd3fc',
+    textOnSurfacePrimary: '#0f172a', // Deep Slate for white cards
+    textOnSurfaceSecondary: '#475569',
     isDarkBackground: true
   },
   {
@@ -39,6 +43,8 @@ export const THEME_PRESETS: ThemeConfig[] = [
     textOnAccent: '#0f0c29',
     textPrimary: '#f3e8ff',
     textSecondary: '#c084fc',
+    textOnSurfacePrimary: '#2e1065', // Deep Purple for white cards
+    textOnSurfaceSecondary: '#581c87',
     isDarkBackground: true
   },
   {
@@ -49,6 +55,8 @@ export const THEME_PRESETS: ThemeConfig[] = [
     textOnAccent: '#064e3b',
     textPrimary: '#ecfdf5',
     textSecondary: '#6ee7b7',
+    textOnSurfacePrimary: '#064e3b', // Deep Green for white cards
+    textOnSurfaceSecondary: '#059669',
     isDarkBackground: true
   },
   {
@@ -59,8 +67,10 @@ export const THEME_PRESETS: ThemeConfig[] = [
     textOnAccent: '#fff1f2',
     textPrimary: '#881337',
     textSecondary: '#fb7185',
+    textOnSurfacePrimary: '#881337',
+    textOnSurfaceSecondary: '#9f1239',
     isDarkBackground: false
   }
 ];
 
-export const DEFAULT_THEME = THEME_PRESETS[0];
+export const DEFAULT_THEME = THEME_PRESETS[1]; // Midnight Silk default

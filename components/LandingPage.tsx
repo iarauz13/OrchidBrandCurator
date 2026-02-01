@@ -128,7 +128,8 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
   }, [isLoaded, isFailsafe, renderFrame]);
 
   return (
-    <div className="landing-page-wrapper">
+    <div className="landing-page-wrapper bg-black text-white min-h-screen">
+      {/* Hero Section (Pinned) */}
       <div ref={containerRef} className={`relative w-full h-screen overflow-hidden ${isFailsafe ? 'silk-bg' : 'bg-black'}`}>
         <canvas
           ref={canvasRef}
@@ -178,6 +179,60 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
           </div>
         )}
       </div>
+
+      {/* Philosophy / Features Section */}
+      <div className="relative z-10 bg-black py-32 px-6">
+        <div className="max-w-6xl mx-auto">
+          {/* Philosophy Statement */}
+          <div className="mb-32 text-center">
+            <h2 className="text-3xl md:text-5xl font-display font-light mb-8 text-white/90">Curate with Intention.</h2>
+            <p className="text-white/50 max-w-2xl mx-auto text-lg leading-relaxed font-light">
+              In an age of infinite feeds, Orchid helps you build a permanent sanctuary for your inspiration.
+              Move beyond fleeting bookmarks into a structured, architectural library designed for clarity.
+            </p>
+          </div>
+
+          {/* Feature Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="p-8 border border-white/5 rounded-2xl bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
+              <div className="w-12 h-12 mb-6 text-white/80 border border-white/20 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+              </div>
+              <h3 className="text-xl font-display font-medium mb-3 text-white">Smart Import</h3>
+              <p className="text-sm text-white/40 leading-relaxed">
+                Effortlessly migrate from Instagram or messy CSVs. Our intelligent engine maps your columns and normalizes data automatically.
+              </p>
+            </div>
+
+            <div className="p-8 border border-white/5 rounded-2xl bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
+              <div className="w-12 h-12 mb-6 text-white/80 border border-white/20 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              </div>
+              <h3 className="text-xl font-display font-medium mb-3 text-white">Visual Folios</h3>
+              <p className="text-sm text-white/40 leading-relaxed">
+                Organize brands into visual collections. Create folios for "Sustainable Fashion" or "Interior Design" with drag-and-drop ease.
+              </p>
+            </div>
+
+            <div className="p-8 border border-white/5 rounded-2xl bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
+              <div className="w-12 h-12 mb-6 text-white/80 border border-white/20 rounded-full flex items-center justify-center">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+              </div>
+              <h3 className="text-xl font-display font-medium mb-3 text-white">Privacy First</h3>
+              <p className="text-sm text-white/40 leading-relaxed">
+                Your sanctuary belongs to you. Data is stored locally or in your private cloud. No tracking, no ads, just your curated world.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="relative z-10 border-t border-white/10 bg-black py-12 text-center">
+        <p className="text-white/20 text-[10px] uppercase tracking-widest font-semibold">
+          © 2026 Orchid. Crafted for the discerning.
+        </p>
+      </footer>
     </div>
   );
 }

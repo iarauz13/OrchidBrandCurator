@@ -339,12 +339,12 @@ const ImportModal: React.FC<ImportModalProps> = ({ isOpen, mode, onClose, onComp
                   <tbody className="divide-y divide-brand-border">
                     {Object.keys(COLUMN_ALIASES).map(field => (
                       <tr key={field} className="hover:bg-brand-surface transition-colors">
-                        <td className="p-4 text-sm font-medium text-brand-text-primary capitalize">{field.replace('_', ' ')} <span className="text-red-400 text-xs">{['store_name', 'website'].includes(field) ? '*' : ''}</span></td>
+                        <td className="p-4 text-sm font-medium text-brand-text-on-surface-primary capitalize">{field.replace('_', ' ')} <span className="text-red-400 text-xs">{['store_name', 'website'].includes(field) ? '*' : ''}</span></td>
                         <td className="p-4">
                           <select
                             value={mapping[field] || ''}
                             onChange={e => setMapping({ ...mapping, [field]: e.target.value })}
-                            className={`w-full p-2 rounded-lg border text-sm focus:ring-2 focus:ring-brand-primary/20 outline-none ${!mapping[field] && ['store_name', 'website'].includes(field) ? 'border-red-300 bg-red-50' : 'border-brand-border bg-white'}`}
+                            className={`w-full p-2 rounded-lg border text-sm focus:ring-2 focus:ring-brand-primary/20 outline-none text-brand-text-on-surface-primary ${!mapping[field] && ['store_name', 'website'].includes(field) ? 'border-red-300 bg-red-50' : 'border-brand-border bg-white'}`}
                           >
                             <option value="">-- Select Column --</option>
                             {rawFile?.headers.map(h => (
