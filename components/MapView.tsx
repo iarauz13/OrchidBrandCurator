@@ -61,22 +61,34 @@ const MapView: React.FC<MapViewProps> = ({ stores, onClose }) => {
 
   return (
     <div className="bg-brand-surface rounded-2xl border border-brand-border p-4 relative animate-in fade-in duration-700 shadow-xl">
-      <button 
-        onClick={onClose} 
-        className="absolute top-8 right-8 z-[1000] p-3 bg-brand-surface border border-brand-border rounded-full text-brand-text-primary hover:scale-110 transition-all shadow-lg group active:scale-95" 
+      <button
+        onClick={onClose}
+        className="absolute top-8 right-8 z-[1000] p-3 bg-brand-surface border border-brand-border rounded-full text-brand-text-primary hover:scale-110 transition-all shadow-lg group active:scale-95"
       >
         <CloseIcon className="group-hover:text-brand-secondary transition-colors" />
       </button>
-      
+
       <div className="w-full h-[70vh] rounded-xl overflow-hidden bg-brand-bg relative border border-brand-border shadow-inner">
         <WorldMap pins={processedPins} onZoomChange={setCurrentZoom} />
       </div>
-      
+
       <div className="text-center mt-6 p-4">
         <h3 className="text-2xl font-bold text-brand-text-primary font-display">Geographic Registry</h3>
         <p className="text-sm text-brand-text-secondary mt-1 max-w-2xl mx-auto leading-relaxed italic">
-            Visualizing {stores.length} records. Dark pins indicate precise city hubs; Peach pins represent national regional aggregates.
+          Visualizing {stores.length} records across the globe.
         </p>
+      </div>
+
+      <div className="absolute bottom-8 left-8 z-[1000] bg-brand-surface/90 backdrop-blur-md p-4 rounded-xl border border-brand-border shadow-lg text-xs font-medium">
+        <h4 className="font-bold uppercase tracking-wider mb-3 text-brand-text-primary">Map Legend</h4>
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-3 h-3 rounded-full bg-brand-primary border border-white shadow-sm"></div>
+          <span className="text-brand-text-secondary">Precise City Location</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="w-3 h-3 rounded-full bg-brand-secondary border border-white shadow-sm"></div>
+          <span className="text-brand-text-secondary">Regional / Country Group</span>
+        </div>
       </div>
     </div>
   );

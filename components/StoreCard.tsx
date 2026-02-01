@@ -72,7 +72,7 @@ const StoreCard: React.FC<StoreCardProps> = ({
     if (!val) return null;
     const trimmed = val.trim();
     if (!trimmed || trimmed.toLowerCase() === 'none' || trimmed.toLowerCase() === 'n/a') return null;
-    if (/^https?:\/\//i.test(trimmed)) return null;
+    if (/^https?:\/\//i.test(trimmed)) return trimmed; // Accept full URLs
     const handle = trimmed.replace(/^@/, '');
     return `https://instagram.com/${handle}`;
   };

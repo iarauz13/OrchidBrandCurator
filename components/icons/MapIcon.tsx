@@ -1,14 +1,14 @@
 import React from 'react';
 
-export const MapIcon: React.FC = () => (
-    <svg 
-        xmlns="http://www.w3.org/2000/svg" 
-        fill="none" 
-        viewBox="0 0 24 24" 
-        strokeWidth={1.5} 
-        stroke="currentColor" 
-        className="w-5 h-5"
+export const MapIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        className={className}
     >
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.5-10.5a.75.75 0 0 0-1.5 0v10.5a.75.75 0 0 0 1.5 0V4.5ZM6.75 12.75a.75.75 0 0 0-1.5 0v2.25a.75.75 0 0 0 1.5 0v-2.25ZM3.75 15a.75.75 0 0 0-1.5 0v4.5a.75.75 0 0 0 1.5 0V15Zm12-6.75a.75.75 0 0 0-1.5 0v6.75a.75.75 0 0 0 1.5 0V8.25Zm3-3a.75.75 0 0 0-1.5 0v11.25a.75.75 0 0 0 1.5 0V5.25Z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
     </svg>
 );

@@ -8,10 +8,10 @@ import { toSentenceCase, toTitleCase } from './textFormatter';
 // Extended Aliases including Instagram JSON specific keys
 export const COLUMN_ALIASES: { [key: string]: string[] } = {
   store_name: ['store_name', 'name', 'brand', 'shop_name', 'store', 'title', 'brand_name', 'business_name'], // Added 'title'
-  website: ['website', 'url', 'link', 'site', 'web', 'shop_url', 'store_url', 'homepage', 'web_site', 'website_url', 'official_website'], // Added 'website_url'
+  website: ['website', 'url', 'link', 'site', 'web', 'shop_url', 'store_url', 'homepage', 'web_site', 'website_url', 'official_website', 'web_addr', 'web_address'], // Added 'web_addr', 'web_address'
   instagram_name: ['instagram_name', 'instagram', 'ig', 'handle', 'insta', 'instagram_handle', 'social', 'ig_handle', 'instagram_url', 'instagram_link', 'profile_url'], // Added 'instagram_url'
-  country: ['country', 'location_country', 'origin', 'nation'],
-  city: ['city', 'location_city', 'location', 'town'],
+  country: ['country', 'location_country', 'origin', 'nation', 'location'], // prioritizing location as country
+  city: ['city', 'location_city', 'town'], // removed generic 'location' to avoid ambiguity
   tags: ['tags', 'categories', 'type', 'tags_list', 'labels', 'keywords'],
   description: ['description', 'notes', 'about', 'bio', 'summary', 'details'],
   price_range: ['price_range', 'pricerange', 'price', 'pricing', 'cost', 'price_point']
@@ -28,7 +28,14 @@ export interface FieldMapping {
   [schemaField: string]: string;
 }
 
-const cleanHeader = (h: string) => h.toLowerCase().trim().replace(/^\uFEFF/, '').replace(/^["']|["']$/g, '');
+const cleanHeader = (h: string) => {
+  let clean = h.trim().toLowerCase();
+  clean = clean.replace(/^\uFEFF/, ''); // Strip BOM
+  clean = clean.replace(/^["']|["']$/g, ''); // Strip quotes
+  clean = clean.replace(/[\s\-\.]+/g, '_'); // Replace spacers with underscore
+  clean = clean.replace(/[^\w_]/g, ''); // Remove other special chars
+  return clean;
+};
 
 const extractNameFromUrl = (url: string): string => {
   try {

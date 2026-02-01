@@ -21,6 +21,9 @@ import ConfirmationModal from './components/ConfirmationModal';
 import ShareModal from './components/ShareModal';
 import EnrichmentModal from './components/EnrichmentModal';
 import { SearchIcon } from './components/icons/SearchIcon';
+import { FilterIcon } from './components/icons/FilterIcon';
+import { GridIcon } from './components/icons/GridIcon';
+import { MapIcon } from './components/icons/MapIcon';
 import { sampleStores } from './sample-data';
 import { mockNotifications } from './mock-data';
 import { t } from './utils/localization';
@@ -507,14 +510,44 @@ const App: React.FC = () => {
             {activeView === 'collection' && activeCollection && (
               <>
                 <div className="flex justify-between items-center mb-4">
-                  <div className="flex items-center gap-4">
-                    <button
-                      onClick={() => setIsFilterPanelOpen(true)}
-                      className="p-3 bg-brand-surface rounded-xl border border-brand-border shadow-subtle hover:shadow-subtle-hover transition-all"
-                    >
-                      <SearchIcon />
-                    </button>
-                    <div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center bg-brand-surface rounded-xl border border-brand-border shadow-subtle p-1 gap-1">
+                      <button
+                        onClick={() => setIsFilterPanelOpen(true)}
+                        className="p-2 hover:bg-brand-bg rounded-lg text-brand-text-secondary hover:text-brand-primary transition-all"
+                        title="Search & Filter"
+                      >
+                        <SearchIcon className="w-5 h-5" />
+                      </button>
+                      <div className="w-px h-6 bg-brand-border mx-1"></div>
+                      <button
+                        onClick={() => setIsFilterPanelOpen(true)}
+                        className={`p-2 hover:bg-brand-bg rounded-lg transition-all ${(filters.tags.length > 0 || filters.priceRanges.length > 0 || filters.onSale) ? 'text-brand-primary bg-brand-secondary/10' : 'text-brand-text-secondary hover:text-brand-primary'
+                          }`}
+                        title="Filters"
+                      >
+                        <FilterIcon className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    <div className="flex items-center bg-brand-surface rounded-xl border border-brand-border shadow-subtle p-1 gap-1">
+                      <button
+                        onClick={() => setCollectionView('grid')}
+                        className={`p-2 rounded-lg transition-all ${collectionView === 'grid' ? 'bg-brand-primary text-white shadow-sm' : 'text-brand-text-secondary hover:text-brand-primary hover:bg-brand-bg'}`}
+                        title="Grid View"
+                      >
+                        <GridIcon className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => setCollectionView('map')}
+                        className={`p-2 rounded-lg transition-all ${collectionView === 'map' ? 'bg-brand-primary text-white shadow-sm' : 'text-brand-text-secondary hover:text-brand-primary hover:bg-brand-bg'}`}
+                        title="Map View"
+                      >
+                        <MapIcon className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    <div className="ml-2">
                       <h2 className="text-3xl font-display font-bold leading-tight">{activeCollection.name}</h2>
                       <p className="text-xs font-bold uppercase tracking-widest opacity-60">
                         {filteredStores.length} Items in Archive
