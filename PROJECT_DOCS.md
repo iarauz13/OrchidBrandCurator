@@ -49,3 +49,17 @@ To build and run the optimized production version:
 2.  **Preview**: Run `npm run preview`. This starts a local server hosting the production artifacts (usually on port 4173).
 
 
+
+## Data Import Architecture
+
+### Smart Import
+The application now supports a "Smart Import" feature allows users to bring data from various sources (legacy CSVs, Instagram JSON exports) without manual formatting.
+
+-   **Logic**: Located in `utils/importHelpers.ts` (replaces legacy `csvParser.ts` for this flow).
+-   **Supported Formats**:
+    -   **CSV**: Standard parsing with support for various delimiters.
+    -   **JSON**: Array of objects (e.g., specific support for Instagram "Following" export format).
+-   **Mapping System**:
+    -   **Aliases**: Uses an extensive list of synonyms (`COLUMN_ALIASES`) to auto-detect columns like `store_name` from headers like "Title", "Brand", or "Name".
+    -   **Manual Fallback**: If confidence is low, users are presented with a mapping UI to manually select which file column corresponds to which schema field.
+-   **Normalization**: All data is converted to the strict `Store` interface before being passed to the deduplication engine.
