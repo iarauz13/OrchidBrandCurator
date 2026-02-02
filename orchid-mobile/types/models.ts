@@ -21,6 +21,7 @@ export interface Binder {
   isShared: boolean;
   createdAt: number;
   updatedAt: number;
+  items?: StoreItem[]; // Hydrated items for UI convenience
   // In a sub-collection architecture, items wouldn't be here, 
   // but for MVP "Small Data" (<500 items), embedded array is fine for read performance.
   // We will keep them separate in Firestore usually, but for the Store State we might join them?

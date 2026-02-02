@@ -43,18 +43,20 @@ export default function HomeScreen() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
-            <Pressable style={[styles.card, { backgroundColor: colors.cardBackground }]}>
-              <View style={[styles.cardIcon, { backgroundColor: colors.background, borderColor: colors.textSecondary + '20' }]}>
-                <FontAwesome name={item.isShared ? "users" : "book"} size={24} color={colors.text} />
-              </View>
-              <View style={styles.cardContent}>
-                <Text style={[styles.cardTitle, { color: colors.text }]}>{item.name}</Text>
-                <Text style={[styles.cardSubtitle, { color: colors.textSecondary }]}>
-                  {item.items?.length || 0} items • {item.isShared ? 'Shared' : 'Private'}
-                </Text>
-              </View>
-              <FontAwesome name="chevron-right" size={14} color={colors.textSecondary} />
-            </Pressable>
+            <Link href={`/binder/${item.id}`} asChild>
+              <Pressable style={[styles.card, { backgroundColor: colors.cardBackground }]}>
+                <View style={[styles.cardIcon, { backgroundColor: colors.background, borderColor: colors.textSecondary + '20' }]}>
+                  <FontAwesome name={item.isShared ? "users" : "book"} size={24} color={colors.text} />
+                </View>
+                <View style={styles.cardContent}>
+                  <Text style={[styles.cardTitle, { color: colors.text }]}>{item.name}</Text>
+                  <Text style={[styles.cardSubtitle, { color: colors.textSecondary }]}>
+                    {item.items?.length || 0} items • {item.isShared ? 'Shared' : 'Private'}
+                  </Text>
+                </View>
+                <FontAwesome name="chevron-right" size={14} color={colors.textSecondary} />
+              </Pressable>
+            </Link>
           )}
         />
       )}

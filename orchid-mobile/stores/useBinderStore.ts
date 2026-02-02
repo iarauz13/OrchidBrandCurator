@@ -14,6 +14,7 @@ interface BinderState {
 
   // Optimistic helper (optional for now, but good practice)
   addBinder: (binder: Binder) => void;
+  joinBinder: (binderId: string, userId: string) => Promise<void>;
 }
 
 export const useBinderStore = create<BinderState>((set) => ({
@@ -28,4 +29,21 @@ export const useBinderStore = create<BinderState>((set) => ({
   setLoading: (isLoading) => set({ isLoading }),
 
   addBinder: (binder) => set((state) => ({ binders: [binder, ...state.binders] })),
+
+  joinBinder: async (binderId: string, userId: string) => {
+    try {
+      const { doc, updateDoc, arrayUnion } = await import('firebase/firestore');
+      const { FIREBASE_DB } = await import('@/config/firebase');
+
+      const binderRef = doc(FIREBASE_DB, 'binders', binderId);
+      await updateDoc(binderRef, {
+        participants: arrayUnion(userId),
+        isShared: true // Implicitly becomes shared
+      });
+      console.log(`[BinderStore] User ${userId} joined binder ${binderId}`);
+    } catch (error) {
+      console.error("[BinderStore] Failed to join binder:", error);
+      throw error;
+    }
+  }
 }));
