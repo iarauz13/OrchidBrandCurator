@@ -102,7 +102,8 @@ const ImportModal: React.FC<ImportModalProps> = ({ isOpen, mode, onClose, onComp
 
     // Auto-analyze immediately to show mapping UI
     try {
-      const data = await parseImportFile(f);
+      const text = await f.text();
+      const data = await parseImportFile(text, f.name);
       setRawFile(data);
       const initialMapping = generateSmartMapping(data.headers);
       setMapping(initialMapping);

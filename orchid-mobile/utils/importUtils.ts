@@ -1,32 +1,34 @@
 
-import { Store } from '../types';
-import { CollectionTemplate } from '../collectionTemplates';
-import { LIMITS } from './validation';
-import { getPriceBucket } from './priceMapper';
-import { toSentenceCase, toTitleCase } from './textFormatter';
+import { Alert } from 'react-native';
 
-// Extended Aliases including Instagram JSON specific keys
+// --- Constants & Config --- //
+export const LIMITS = {
+  MAX_TAGS_PER_STORE: 10,
+  MAX_NAME_LENGTH: 100
+};
+
 export const COLUMN_ALIASES: { [key: string]: string[] } = {
-  store_name: ['store_name', 'name', 'brand', 'shop_name', 'store', 'title', 'brand_name', 'business_name'], // Added 'title'
-  website: ['website', 'url', 'link', 'site', 'web', 'shop_url', 'store_url', 'homepage', 'web_site', 'website_url', 'official_website', 'web_addr', 'web_address'], // Added 'web_addr', 'web_address'
-  instagram_name: ['instagram_name', 'instagram', 'ig', 'handle', 'insta', 'instagram_handle', 'social', 'ig_handle', 'instagram_url', 'instagram_link', 'profile_url'], // Added 'instagram_url'
-  country: ['country', 'location_country', 'origin', 'nation', 'location'], // prioritizing location as country
-  city: ['city', 'location_city', 'town'], // removed generic 'location' to avoid ambiguity
+  store_name: ['store_name', 'name', 'brand', 'shop_name', 'store', 'title', 'brand_name', 'business_name'],
+  website: ['website', 'url', 'link', 'site', 'web', 'shop_url', 'store_url', 'homepage', 'web_site', 'website_url', 'official_website', 'web_addr', 'web_address'],
+  instagram_name: ['instagram_name', 'instagram', 'ig', 'handle', 'insta', 'instagram_handle', 'social', 'ig_handle', 'instagram_url', 'instagram_link', 'profile_url'],
+  country: ['country', 'location_country', 'origin', 'nation', 'location'],
+  city: ['city', 'location_city', 'town'],
   tags: ['tags', 'categories', 'type', 'tags_list', 'labels', 'keywords'],
   description: ['description', 'notes', 'about', 'bio', 'summary', 'details'],
   price_range: ['price_range', 'pricerange', 'price', 'pricing', 'cost', 'price_point']
 };
 
+export interface FieldMapping {
+  [schemaField: string]: string;
+}
+
 export interface FileData {
   headers: string[];
-  rows: any[]; // Array of objects or arrays depending on source, but we'll normalize to objects
+  rows: any[];
   fileName: string;
 }
 
-export interface FieldMapping {
-  // key is the Schema Field (e.g. 'store_name'), value is the File Header (e.g. 'Title')
-  [schemaField: string]: string;
-}
+// --- Helpers --- //
 
 const cleanHeader = (h: string) => {
   let clean = h.trim().toLowerCase();
@@ -49,27 +51,63 @@ const extractNameFromUrl = (url: string): string => {
   }
 };
 
-/**
- * Parses a file content (CSV or JSON) and returns headers and raw data.
- * Accepts content as string to be platform agnostic (Web vs Mobile).
- */
+const toTitleCase = (str: string) => {
+  return str.replace(
+    /\w\S*/g,
+    (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+  );
+};
+
+const toSentenceCase = (str: string) => {
+  if (!str) return '';
+  const s = str.trim();
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
+
+const getPriceBucket = (val: string): string => {
+  // Simplified logic for mobile import
+  if (!val) return '';
+  return ''; // Default to empty for now to match strict type or just let user edit later
+};
+
+// --- Core Parsing Logic --- //
+
 export const parseImportFile = async (fileContent: string, fileName: string): Promise<FileData> => {
   const text = fileContent;
 
-  if (fileName.endsWith('.json')) {
+  if (fileName.toLowerCase().endsWith('.json')) {
     try {
       const json = JSON.parse(text);
       if (!Array.isArray(json)) throw new Error("JSON must be an array of objects.");
       if (json.length === 0) return { headers: [], rows: [], fileName };
 
-      // Assume all objects have similar keys, take keys from first object as headers
       const headers = Object.keys(json[0]);
       return { headers, rows: json, fileName };
     } catch (e) {
       throw new Error("Invalid JSON format.");
     }
   } else {
-    // State-Machine Parser for RFC 4180 compliance
+    // CSV Parser
+    const detectDelimiter = (text: string): string => {
+      const firstLineEnd = text.indexOf('\n');
+      const sample = text.substring(0, firstLineEnd === -1 ? Math.min(text.length, 1000) : firstLineEnd);
+      const candidates = [',', ';', '\t', '|'];
+      let best = ',';
+      let max = 0;
+      candidates.forEach(d => {
+        const count = sample.split(d).length - 1;
+        if (count > max) { max = count; best = d; }
+      });
+      return best;
+    };
+
+    const delimiter = detectDelimiter(text);
+
+    // Quick and dirty CSV split for Mobile MVP (Assuming simple CSVs first)
+    // For robust parsing, we'd copy the State Machine, but let's try a simpler split first
+    // to keep file size down, OR just copy the state machine.
+    // Copying state machine is safer for "WhatsApp CSVs" which might be messy.
+
     const parseCSV = (text: string, delimiter: string): string[][] => {
       const rows: string[][] = [];
       let currentRow: string[] = [];
@@ -101,7 +139,6 @@ export const parseImportFile = async (fileContent: string, fileName: string): Pr
         }
       }
 
-      // Push remaining
       if (currentCell.length > 0 || currentRow.length > 0) {
         currentRow.push(currentCell.trim());
         rows.push(currentRow);
@@ -110,26 +147,9 @@ export const parseImportFile = async (fileContent: string, fileName: string): Pr
       return rows;
     };
 
-    // Detect delimiter from first chunk
-    const detectDelimiter = (text: string): string => {
-      const firstLineEnd = text.indexOf('\n');
-      const sample = text.substring(0, firstLineEnd === -1 ? Math.min(text.length, 1000) : firstLineEnd);
-      const candidates = [',', ';', '\t', '|'];
-      let best = ',';
-      let max = 0;
-      candidates.forEach(d => {
-        const count = sample.split(d).length - 1;
-        if (count > max) { max = count; best = d; }
-      });
-      return best;
-    };
-
-    const delimiter = detectDelimiter(text);
     const rows = parseCSV(text, delimiter);
-
     if (rows.length < 2) return { headers: [], rows: [], fileName };
 
-    // Post-process headers
     const headers = rows[0].map(cleanHeader);
     const dataRows = rows.slice(1).map(cells => {
       const rowObj: any = {};
@@ -143,18 +163,13 @@ export const parseImportFile = async (fileContent: string, fileName: string): Pr
   }
 };
 
-/**
- * Generates an initial mapping based on aliases and fuzzy matching.
- */
 export const generateSmartMapping = (fileHeaders: string[]): FieldMapping => {
   const mapping: FieldMapping = {};
   const usedHeaders = new Set<string>();
-
   const schemaFields = Object.keys(COLUMN_ALIASES);
 
   schemaFields.forEach(field => {
     const aliases = COLUMN_ALIASES[field];
-    // 1. Exact/Alias Match
     const match = fileHeaders.find(h => {
       const cleanH = cleanHeader(h);
       return aliases.includes(cleanH) && !usedHeaders.has(h);
@@ -164,25 +179,14 @@ export const generateSmartMapping = (fileHeaders: string[]): FieldMapping => {
       mapping[field] = match;
       usedHeaders.add(match);
     }
-    // 2. Fuzzy Match (Simple inclusion)
-    else {
-      // e.g. "My Store Name" contains "store"
-      // This is risky, let's stick to alias only for high confidence, 
-      // or very strict fuzzy (e.g. if alias is unique substring)
-    }
   });
 
   return mapping;
 };
 
-/**
- * Converts raw rows into strictly typed Store objects using the mapping.
- */
-export const normalizeData = (rawData: any[], mapping: FieldMapping): Store[] => {
+// Returns generic objects to separate concerns from strict Mobile Type
+export const normalizeData = (rawData: any[], mapping: FieldMapping): any[] => {
   return rawData.map(row => {
-    // rawData is array of objects { [fileHeader]: value }
-
-    // Helper to get value via mapping
     const getVal = (schemaKey: string) => {
       const fileKey = mapping[schemaKey];
       if (!fileKey) return '';
@@ -196,54 +200,46 @@ export const normalizeData = (rawData: any[], mapping: FieldMapping): Store[] =>
       storeName = extractNameFromUrl(website);
     }
 
-    // Apply strict formatting as per user request
     if (storeName) {
       storeName = toTitleCase(storeName);
+      if (storeName.length > LIMITS.MAX_NAME_LENGTH) {
+        storeName = storeName.substring(0, LIMITS.MAX_NAME_LENGTH);
+      }
     }
 
-    // Safety check for suspicious long names (e.g. parsing errors)
-    if (storeName && storeName.length > LIMITS.MAX_NAME_LENGTH) {
-      storeName = storeName.substring(0, LIMITS.MAX_NAME_LENGTH);
-    }
+    if (!storeName && !website) return null;
 
-    if (!storeName && !website) return null; // Skip invalid
-
+    // Construct a Full-Featured Object compatible with Web Schema
     return {
-      id: crypto.randomUUID(),
+      // Logic for ID generation should happen at insertion time or here? 
+      // crypto.randomUUID might not be available in RN without polyfill.
+      // We'll let the Store logic generating the ID or use simple Math.random fallback
+      id: Math.random().toString(36).substring(7),
+
+      // Mapped fields
       store_name: storeName || 'New Brand',
       website: website,
       instagram_name: getVal('instagram_name'),
       country: getVal('country'),
       city: getVal('city'),
       description: toSentenceCase(getVal('description')),
-      tags: getVal('tags').split(/[|;,]/).map(t => t.trim()).filter(Boolean).slice(0, LIMITS.MAX_TAGS_PER_STORE),
-      rating: parseFloat(getVal('rating')) || 0,
-      addedBy: { userId: 'guest', userName: 'Guest' }, // Default
+      tags: getVal('tags').split(/[|;,]/).map((t: string) => t.trim()).filter(Boolean).slice(0, LIMITS.MAX_TAGS_PER_STORE),
+
+      // Defaults
+      rating: 0,
+      addedBy: { userId: 'mobile_import', userName: 'Me' },
       favoritedBy: [],
-      privateNotes: {},
+      privateNotes: [],
       customFields: {},
-      priceRange: getPriceBucket(getVal('price_range')) as any,
+      priceRange: '',
       sustainability: '',
       imageUrl: '',
-      collectionId: '' // Assigned later
+      collectionId: '',
+
+      // Mobile Specfic Mappings (for immediate UI support)
+      name: storeName || 'New Brand',
+      category: getVal('tags').split(',')[0] || 'Brand', // Pick first tag as category
+      userNote: getVal('description')
     };
-  }).filter(Boolean) as Store[];
-};
-
-/**
- * Generates a clean CSV string from the normalized data.
- */
-export const generateCSV = (stores: Store[]): string => {
-  const headers = ['store_name', 'website_url', 'instagram_url', 'description', 'country', 'city', 'tags'];
-  const rows = stores.map(s => [
-    s.store_name,
-    s.website,
-    s.instagram_name,
-    `"${(s.description || '').replace(/"/g, '""')}"`,
-    s.country,
-    s.city,
-    `"${s.tags.join(',')}"`
-  ].join(','));
-
-  return [headers.join(','), ...rows].join('\n');
+  }).filter(Boolean);
 };
