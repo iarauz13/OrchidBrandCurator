@@ -3,6 +3,7 @@ import { View, Text, TextInput, Button, StyleSheet, Alert, ActivityIndicator } f
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { FIREBASE_AUTH } from '@/config/firebase';
 import { Link, useRouter } from 'expo-router';
+import AppleAuthButton from '@/components/AppleAuthButton';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -47,7 +48,10 @@ export default function LoginScreen() {
         {loading ? (
           <ActivityIndicator size="large" />
         ) : (
-          <Button title="Sign In" onPress={handleLogin} />
+          <View style={{ gap: 12 }}>
+            <Button title="Sign In" onPress={handleLogin} />
+            <AppleAuthButton />
+          </View>
         )}
 
         <View style={styles.footer}>

@@ -39,6 +39,7 @@ import {
   googleProvider,
   isFirebaseConfigured,
   signInWithPopup,
+  OAuthProvider,
   onAuthStateChanged,
   doc,
   setDoc,
@@ -61,7 +62,14 @@ export interface StoreFilters {
   customFields: Record<string, string[]>;
 }
 
+import { InviteLandingPage } from './components/InviteLandingPage';
+
 const App: React.FC = () => {
+  // Simple "Router" for the invite capabilities
+  if (window.location.pathname.startsWith('/invite/')) {
+    return <InviteLandingPage />;
+  }
+
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(isFirebaseConfigured);
   const [loginError, setLoginError] = useState<string | null>(null);
@@ -203,6 +211,19 @@ const App: React.FC = () => {
   const handleLogin = async () => {
     if (!isFirebaseConfigured) return;
     try { await signInWithPopup(auth, googleProvider); } catch (err) { setLoginError("Could not sign in with Google."); }
+  };
+
+  const handleAppleLogin = async () => {
+    if (!isFirebaseConfigured) return;
+    try {
+      const appleProvider = new OAuthProvider('apple.com');
+      appleProvider.addScope('email');
+      appleProvider.addScope('name');
+      await signInWithPopup(auth, appleProvider);
+    } catch (err: any) {
+      console.error(err);
+      setLoginError("Could not sign in with Apple. Ensure Service ID is configured.");
+    }
   };
 
   const handleGuestLogin = () => { setUser({ userId: 'guest', firstName: 'Guest', lastName: 'User' }); };
@@ -458,6 +479,7 @@ const App: React.FC = () => {
     return (
       <LoginModal
         onLogin={handleLogin}
+        onAppleLogin={handleAppleLogin}
         onGuestLogin={handleGuestLogin}
         isLoading={authLoading}
         error={loginError}

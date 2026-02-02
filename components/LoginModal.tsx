@@ -1,15 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { isFirebaseConfigured } from '../lib/firebase';
+import TermsOfServiceModal from './TermsOfServiceModal';
 
 interface LoginModalProps {
   onLogin: () => void;
+  onAppleLogin?: () => void;
   onGuestLogin: () => void;
   isLoading: boolean;
   error: string | null;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ onLogin, onGuestLogin, isLoading, error }) => {
+const LoginModal: React.FC<LoginModalProps> = ({ onLogin, onAppleLogin, onGuestLogin, isLoading, error }) => {
   const hasConfig = isFirebaseConfigured;
+  const [agreed, setAgreed] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
 
   return (
     <>
@@ -60,11 +64,24 @@ const LoginModal: React.FC<LoginModalProps> = ({ onLogin, onGuestLogin, isLoadin
                 : "Development Mode: Firebase keys not found."}
             </p>
 
+            <div className="w-full flex items-start gap-3 mb-6 p-3 bg-gray-50 rounded-lg text-left">
+              <input
+                type="checkbox"
+                id="terms"
+                checked={agreed}
+                onChange={(e) => setAgreed(e.target.checked)}
+                className="mt-1 h-4 w-4 text-brand-primary rounded border-gray-300 focus:ring-brand-primary cursor-pointer"
+              />
+              <label htmlFor="terms" className="text-sm text-gray-600 cursor-pointer">
+                I agree to the <span className="text-brand-primary underline hover:text-brand-primary-dark" onClick={(e) => { e.preventDefault(); setShowTerms(true); }}>Terms of Service & Privacy Policy</span>.
+              </label>
+            </div>
+
             <div className="w-full space-y-3">
               <button
                 onClick={onLogin}
-                disabled={isLoading || !hasConfig}
-                className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-md text-brand-text-primary font-medium hover:bg-gray-50 transition-all shadow-subtle hover:shadow-subtle-hover disabled:opacity-50"
+                disabled={isLoading || !hasConfig || !agreed}
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white border border-gray-300 rounded-md text-brand-text-primary font-medium hover:bg-gray-50 transition-all shadow-subtle hover:shadow-subtle-hover disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
                   <span className="w-5 h-5 border-2 border-brand-secondary border-t-transparent rounded-full animate-spin"></span>
@@ -77,8 +94,22 @@ const LoginModal: React.FC<LoginModalProps> = ({ onLogin, onGuestLogin, isLoadin
               </button>
 
               <button
+                onClick={onAppleLogin}
+                disabled={isLoading || !hasConfig || !agreed || !onAppleLogin}
+                className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-black text-white rounded-md font-medium hover:opacity-90 transition-all shadow-subtle disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M17.5 12.6c0-2.4 2-3.6 2.1-3.7-.1-.3-1.4-4.8-5.4-4.8-1.6 0-2.8.9-3.7.9-.9 0-2.3-1-3.8-1-3.9 0-6.1 4.5-6.1 9.4 0 3.7 1.4 7.6 5.4 7.6 1.3 0 1.8-1 3.4-1 1.6 0 2 .9 3.4.9 2.3 0 4.2-3.9 4.2-3.9-.1 0-2.4-1.4-2.4-4.4zM13.4 4c.8-1 1.3-2.3 1.2-3.6-1.1 0-2.5.8-3.3 1.7-.8.9-1.4 2.2-1.2 3.6 1.2.1 2.6-.7 3.3-1.7z" />
+                </svg>
+                <span>{hasConfig ? "Sign in with Apple" : "Apple Auth Disabled"}</span>
+              </button>
+
+              <div className="border-t border-gray-200 my-2"></div>
+
+              <button
                 onClick={onGuestLogin}
-                className="w-full px-4 py-3 bg-brand-primary text-white font-semibold rounded-md hover:opacity-90 transition shadow-subtle"
+                disabled={!agreed}
+                className="w-full px-4 py-3 bg-brand-primary text-white font-semibold rounded-md hover:opacity-90 transition shadow-subtle disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Continue as Guest (Local Mode)
               </button>
@@ -96,6 +127,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ onLogin, onGuestLogin, isLoadin
           </div>
         </div>
       </div>
+      <TermsOfServiceModal isOpen={showTerms} onClose={() => setShowTerms(false)} />
     </>
   );
 };

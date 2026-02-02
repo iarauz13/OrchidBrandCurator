@@ -21,18 +21,18 @@ export default function ShareButton({ binder, items }: ShareButtonProps) {
         .map((item, index) => `${index + 1}. ${item.name} - ${item.website || 'No link'}`)
         .join('\n');
 
-      // 2. Generate Deep Link (Scheme: orchid://)
-      // Note: In development/simulator, this opens the app. 
-      // In prod, this would need Universal Links (HTTPS) to handle "App not installed" cases.
-      const deepLink = `orchid://invite/binder/${binder.id}`;
+      // 2. Generate Universal Link (Web Fallback)
+      // This URL will open the Web App's InviteLandingPage, which then Deep Links to the App.
+      // Replace with your actual Firebase Hosting domain or production domain.
+      const webLink = `https://orchid-40c23.web.app/invite/${binder.id}`;
 
       // 3. Construct the Message
-      const message = `Check out my "${binder.name}" Binder on Orchid 🌸\n\n${storeList}\n\nJoin me here:\n${deepLink}`;
+      const message = `Check out my "${binder.name}" Binder on Orchid 🌸\n\n${storeList}\n\nJoin me here:\n${webLink}`;
 
       // 4. Trigger Native Share Sheet
       const result = await Share.share({
         message,
-        url: deepLink, // iOS often uses this for the "copy link" feature
+        url: webLink, // iOS often uses this for the "copy link" feature
         title: `Join my ${binder.name} Binder`, // Android only
       });
 

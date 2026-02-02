@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { StyleSheet, View, Text, FlatList, Pressable, Image } from 'react-native';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useBinderStore } from '@/stores/useBinderStore';
@@ -7,8 +7,13 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
 import ShareButton from '@/components/ShareButton';
+import StoreShareButton from '@/components/StoreShareButton';
+import QRCodeModal from '@/components/QRCodeModal';
+import ReportModal from '@/components/ReportModal';
 
 export default function BinderDetailScreen() {
+  const [showQR, setShowQR] = useState(false);
+  const [showReport, setShowReport] = useState(false);
   const { id } = useLocalSearchParams();
   const { binders } = useBinderStore();
   const router = useRouter();
@@ -48,8 +53,32 @@ export default function BinderDetailScreen() {
       <Stack.Screen
         options={{
           headerTitle: binder.name,
-          headerRight: () => <ShareButton binder={binder} items={items} />,
+          headerRight: () => (
+            <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+              <Pressable onPress={() => setShowReport(true)}>
+                <FontAwesome name="flag-o" size={20} color={colors.textSecondary} />
+              </Pressable>
+              <Pressable onPress={() => setShowQR(true)}>
+                <FontAwesome name="qrcode" size={24} color={colors.text} />
+              </Pressable>
+              <ShareButton binder={binder} items={items} />
+            </View>
+          ),
         }}
+      />
+
+      <ReportModal
+        visible={showReport}
+        onClose={() => setShowReport(false)}
+        targetName={binder.name}
+        targetUid={binder.ownerId}
+      />
+
+      <QRCodeModal
+        visible={showQR}
+        onClose={() => setShowQR(false)}
+        binderId={binder.id}
+        binderName={binder.name}
       />
 
       <FlatList
@@ -82,6 +111,7 @@ export default function BinderDetailScreen() {
               <Text style={[styles.cardTitle, { color: colors.text }]}>{item.name}</Text>
               <Text style={[styles.cardLink, { color: colors.tint }]}>{item.website}</Text>
             </View>
+            <StoreShareButton item={item} />
           </View>
         )}
         ListEmptyComponent={

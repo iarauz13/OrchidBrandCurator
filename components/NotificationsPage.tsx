@@ -123,81 +123,74 @@ const BrandActivityFeed: React.FC<{ notifications: AppNotification[], theme: The
 
 
 const SocialFeed: React.FC<{ notifications: AppNotification[], onMarkAllAsRead: () => void, onAcceptShare?: (n: AppNotification) => void, theme: ThemeConfig }> = ({ notifications, onMarkAllAsRead, onAcceptShare, theme }) => {
-    const unreadCount = notifications.filter(n => !n.read).length;
-
+    // "Frosted VIP" Design - Exclusive Invitation
     return (
-        <div className="max-w-4xl mx-auto min-h-[60vh]">
-            <div className="flex justify-between items-center mb-8">
-                <h2 className="text-4xl font-light font-display transition-colors" style={{ color: theme.textPrimary }}>Social Feed</h2>
-                {unreadCount > 0 && (
-                    <button
-                        onClick={onMarkAllAsRead}
-                        style={{ color: theme.accent }}
-                        className="text-sm font-medium hover:underline transition-all"
-                    >
-                        Mark all as read
-                    </button>
-                )}
-            </div>
-            {notifications.length > 0 ? (
-                <div className="space-y-4">
-                    {notifications.map(notification => (
-                        <div
-                            key={notification.id}
-                            className={`p-5 bg-brand-surface rounded-xl border flex items-start gap-4 transition-all duration-300 ${notification.read ? 'border-brand-border opacity-80' : 'border-brand-secondary/30 bg-brand-secondary/5 shadow-sm'}`}
-                        >
-                            <div className="flex-shrink-0 w-12 h-12 bg-brand-bg rounded-full flex items-center justify-center overflow-hidden border border-brand-border shadow-inner">
-                                {notification.brandImageUrl ? (
-                                    <img src={notification.brandImageUrl} className="w-full h-full object-cover" alt="Sender" />
-                                ) : (
-                                    <div className="text-brand-secondary"><UsersIcon className="w-6 h-6" /></div>
-                                )}
-                            </div>
-                            <div className="flex-grow">
-                                <div className="flex justify-between items-start mb-1">
-                                    <h3 className="font-bold" style={{ color: notification.read ? theme.textOnSurfacePrimary : theme.textPrimary }}>{notification.title}</h3>
-                                    <p className="text-[10px] font-bold opacity-50 uppercase tracking-tighter" style={{ color: notification.read ? theme.textOnSurfaceSecondary : theme.textSecondary }}>{timeSince(notification.timestamp)}</p>
-                                </div>
-                                <p className="text-sm leading-relaxed" style={{ color: notification.read ? theme.textOnSurfaceSecondary : theme.textSecondary }}>{notification.message}</p>
+        <div className="max-w-4xl mx-auto min-h-[65vh] flex items-center justify-center relative overflow-hidden rounded-3xl my-8">
+            {/* 1. Abstract Elegant Background */}
+            {/* Using a gradient mesh concept with brand colors */}
+            <div
+                className="absolute inset-0 opacity-40"
+                style={{
+                    background: `
+                        radial-gradient(circle at 10% 20%, ${theme.secondary}30 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, ${theme.primary}20 0%, transparent 40%),
+                        radial-gradient(circle at 50% 50%, ${theme.accent}10 0%, transparent 60%)
+                    `,
+                    filter: 'blur(60px)',
+                }}
+            />
 
-                                {notification.payload && (
-                                    <div className="mt-4 p-4 bg-brand-surface rounded-lg border border-brand-border group shadow-subtle hover:border-brand-secondary transition-colors">
-                                        <div className="flex gap-4 mb-3">
-                                            {notification.payload.store.imageUrl ? (
-                                                <img src={notification.payload.store.imageUrl} className="w-20 h-20 object-cover rounded-md border border-brand-border shadow-sm" alt={notification.payload.store.store_name} />
-                                            ) : (
-                                                <div className="w-20 h-20 bg-brand-bg rounded-md flex items-center justify-center border border-brand-border"><TagIcon /></div>
-                                            )}
-                                            <div className="flex flex-col justify-center">
-                                                <p className="font-bold font-display text-xl" style={{ color: theme.textOnSurfacePrimary }}>{notification.payload.store.store_name}</p>
-                                                <p className="text-[10px] font-bold opacity-60 uppercase tracking-widest" style={{ color: theme.textOnSurfaceSecondary }}>{notification.payload.store.city}, {notification.payload.store.country}</p>
-                                            </div>
-                                        </div>
-                                        {onAcceptShare && (
-                                            <button
-                                                onClick={() => onAcceptShare(notification)}
-                                                className="w-full flex items-center justify-center gap-2 text-sm bg-brand-primary text-white px-4 py-2.5 rounded-lg hover:bg-brand-secondary transition-all font-semibold"
-                                            >
-                                                <PlusCircleIcon className="w-5 h-5" /> Add to My Collection
-                                            </button>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    ))}
+            {/* 2. Glassmorphism Card */}
+            <div
+                className="relative z-10 p-12 max-w-lg w-full rounded-2xl border shadow-2xl flex flex-col items-center text-center transition-all duration-700 animate-in fade-in zoom-in-95"
+                style={{
+                    background: theme.isDarkBackground ? 'rgba(30, 30, 30, 0.4)' : 'rgba(255, 255, 255, 0.6)',
+                    backdropFilter: 'blur(20px)',
+                    WebkitBackdropFilter: 'blur(20px)', // Safari support
+                    borderColor: theme.border,
+                    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.1)',
+                }}
+            >
+                {/* Icon Badge */}
+                <div
+                    className="w-20 h-20 rounded-full flex items-center justify-center mb-8 shadow-sm"
+                    style={{ backgroundColor: theme.background }}
+                >
+                    <UsersIcon className="w-10 h-10" style={{ color: theme.primary }} />
                 </div>
-            ) : (
-                <div className="flex flex-col items-center justify-center py-24 text-center border-2 border-dashed border-brand-border rounded-2xl bg-brand-surface/50">
-                    <div className="w-16 h-16 bg-brand-bg rounded-full flex items-center justify-center mb-6 text-brand-text-secondary opacity-40">
-                        <UsersIcon className="w-8 h-8" />
-                    </div>
-                    <h3 className="text-3xl font-semibold font-display mb-3" style={{ color: theme.textPrimary }}>Join the Conversation</h3>
-                    <p className="max-w-sm leading-relaxed px-6" style={{ color: theme.textSecondary }}>
-                        Items shared by your friends and collaborative collection activity will appear in this feed.
-                    </p>
+
+                {/* Typography */}
+                <h2 className="text-4xl font-bold font-display mb-4 tracking-tight" style={{ color: theme.textPrimary }}>
+                    The Inner Circle
+                </h2>
+
+                <div className="h-1 w-16 rounded-full mb-6" style={{ backgroundColor: theme.primary }} />
+
+                <p className="text-lg leading-relaxed mb-10" style={{ color: theme.textSecondary }}>
+                    Collaboration happens in the moment.<br />
+                    Experience the full <span className="font-bold" style={{ color: theme.textPrimary }}>Orchid Social Network</span> exclusively on our mobile app.
+                </p>
+
+                {/* Call to Actions */}
+                <div className="flex flex-col w-full gap-4">
+                    <button className="flex items-center justify-center gap-3 w-full h-14 bg-black text-white rounded-xl hover:scale-[1.02] transition-transform active:scale-95 shadow-lg">
+                        <svg viewBox="0 0 384 512" width="20" height="20" fill="currentColor"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-38.3-19.7-64.3-19.7-33.2 0-66.5 14.8-90 44.5-56.5 72.1-13.6 220 57 261.2 28.5 16.6 57 16.2 83.2-.3 25.1-15.8 55.4-15.8 80.9-.3 25.5 16.4 51.5 16.4 79.9.2 46.5-59.5 45.3-77.9 69-79.6-1.5-68.5-47.9-106.1-47.9-106.1 36.3 0 76.9 14.4 96.6 42.7-52.6 30.5-84.7 93.3-81.2 156.2z" /></svg>
+                        <span className="font-semibold text-sm">Download on the App Store</span>
+                    </button>
+
+                    <button
+                        className="flex items-center justify-center gap-3 w-full h-14 border rounded-xl hover:bg-black/5 transition-colors"
+                        style={{ borderColor: theme.border, color: theme.textPrimary }}
+                    >
+                        <svg viewBox="0 0 512 512" width="20" height="20" fill="currentColor"><path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l220.7-221.3-60.1-60.1L92.7 413.5l11.9 85.5z" /></svg>
+                        <span className="font-semibold text-sm">Get it on Google Play</span>
+                    </button>
                 </div>
-            )}
+
+                <p className="mt-8 text-xs font-medium tracking-wider uppercase opacity-50" style={{ color: theme.textSecondary }}>
+                    Syncs seamlessly with your desktop
+                </p>
+            </div>
         </div>
     );
 };

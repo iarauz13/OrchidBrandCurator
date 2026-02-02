@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/useAuthStore';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Colors from '@/constants/Colors';
 import { useColorScheme } from '@/components/useColorScheme';
+import EmptyState from '@/components/EmptyState';
 
 export default function HomeScreen() {
   const { binders, isLoading } = useBinderStore();
@@ -19,12 +20,19 @@ export default function HomeScreen() {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.header}>
         <Text style={[styles.title, { color: colors.text }]}>My Binders</Text>
-        <Link href="/modal" asChild>
-          <Pressable style={styles.addButton}>
-            <FontAwesome name="plus" size={16} color="#fff" />
-            <Text style={styles.addButtonText}>New</Text>
-          </Pressable>
-        </Link>
+        <View style={{ flexDirection: 'row', gap: 12 }}>
+          <Link href="/scan" asChild>
+            <Pressable style={[styles.addButton, { backgroundColor: colors.cardBackground, borderWidth: 1, borderColor: colors.textSecondary + '40' }]}>
+              <FontAwesome name="qrcode" size={16} color={colors.text} />
+            </Pressable>
+          </Link>
+          <Link href="/modal" asChild>
+            <Pressable style={styles.addButton}>
+              <FontAwesome name="plus" size={16} color="#fff" />
+              <Text style={styles.addButtonText}>New</Text>
+            </Pressable>
+          </Link>
+        </View>
       </View>
 
       {isLoading && binders.length === 0 ? (
@@ -32,11 +40,13 @@ export default function HomeScreen() {
           <Text style={{ color: colors.textSecondary }}>Syncing...</Text>
         </View>
       ) : binders.length === 0 ? (
-        <View style={styles.emptyState}>
-          <FontAwesome name="folder-open-o" size={48} color={colors.textSecondary} />
-          <Text style={[styles.emptyText, { color: colors.text }]}>No binders yet.</Text>
-          <Text style={[styles.emptySubtext, { color: colors.textSecondary }]}>Create one to start curating.</Text>
-        </View>
+        <EmptyState
+          title="No binders yet"
+          description="Create your first binder to start curating your favorite brands."
+          actionLabel="Create Binder"
+          onAction={() => router.push('/modal')}
+          icon="folder-open-outline"
+        />
       ) : (
         <FlatList
           data={binders}

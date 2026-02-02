@@ -3,13 +3,13 @@
 // Using namespace imports and destructuring to resolve resolution issues in specific environments.
 import * as firebaseApp from "firebase/app";
 import * as firebaseAuth from "firebase/auth";
-import { 
-  getFirestore, doc, setDoc, getDoc, collection, onSnapshot, query, where, deleteDoc 
+import {
+  getFirestore, doc, setDoc, getDoc, collection, onSnapshot, query, where, deleteDoc
 } from "firebase/firestore";
 
 // Fix: Destructuring from namespace imports to resolve "no exported member" errors
 const { initializeApp, getApp, getApps } = firebaseApp;
-const { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup } = firebaseAuth;
+const { getAuth, GoogleAuthProvider, OAuthProvider, onAuthStateChanged, signInWithPopup } = firebaseAuth;
 
 const firebaseConfig = {
   apiKey: process.env.VITE_FIREBASE_API_KEY || "",
@@ -44,11 +44,12 @@ if (isFirebaseConfigured) {
 }
 
 // Export modular functions from a single entry point to resolve resolution issues in external files
-export { 
-  auth, 
-  db, 
-  googleProvider, 
-  onAuthStateChanged, 
+export {
+  auth,
+  db,
+  googleProvider,
+  OAuthProvider,
+  onAuthStateChanged,
   signInWithPopup,
   doc,
   setDoc,
