@@ -114,7 +114,10 @@ export default function CollectionDetailScreen() {
     <ScalableButton
       style={[styles.storeRow, { borderBottomColor: currentTheme.border }]}
       onPress={() => {
-        // TODO: Navigate to store detail
+        router.push({
+          pathname: `/brand/${item.id}`,
+          params: { collectionId: id }
+        });
       }}
     >
       <View style={styles.storeContent}>

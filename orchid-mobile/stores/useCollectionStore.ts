@@ -13,6 +13,8 @@ interface CollectionState {
   importItems: (collectionId: string, items: StoreItem[], mode: 'replace' | 'append') => void;
   loadSampleCollections: () => void;
   renameCollection: (id: string, newName: string) => void;
+  updateStoreItem: (collectionId: string, itemId: string, updates: Partial<StoreItem>) => void;
+  removeStoreFromCollection: (collectionId: string, storeId: string) => void;
 }
 
 // Generate simple ID
@@ -90,8 +92,36 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
         createdAt: now,
         updatedAt: now,
         stores: [
-          { id: generateId(), name: 'Acne Studios', category: 'Fashion', logoUrl: 'https://logo.clearbit.com/acnestudios.com', website: 'https://acnestudios.com', createdAt: now, addedBy: 'system' },
-          { id: generateId(), name: 'Aesop', category: 'Beauty', logoUrl: 'https://logo.clearbit.com/aesop.com', website: 'https://aesop.com', createdAt: now, addedBy: 'system' },
+          {
+            id: generateId(),
+            name: 'Acne Studios',
+            category: 'Fashion',
+            tags: ['Minimalist', 'Scandinavian', 'Luxury'],
+            country: 'Sweden',
+            city: 'Stockholm',
+            description: 'Acne Studios is a Stockholm-based fashion house with a multi-disciplinary approach. Through founder and Creative Director Jonny Johansson’s interest in photography, art, architecture and contemporary culture.',
+            logoUrl: 'https://logo.clearbit.com/acnestudios.com',
+            website: 'https://acnestudios.com',
+            instagram: '@acnestudios',
+            userNote: 'Obsessed with their leather jackets and oversized scarves.',
+            createdAt: now,
+            addedBy: 'system'
+          },
+          {
+            id: generateId(),
+            name: 'Aesop',
+            category: 'Beauty',
+            tags: ['Skincare', 'Sustainable', 'Minimalist'],
+            country: 'Australia',
+            city: 'Melbourne',
+            description: 'Aesop is an Australian luxury skin care brand owned by Brazilian company Natura & Co. In addition to skin care, Aesop also produces hair care, soaps and fragrance.',
+            logoUrl: 'https://logo.clearbit.com/aesop.com',
+            website: 'https://aesop.com',
+            instagram: '@aesopskincare',
+            userNote: 'Their Resurrection Aromatique Hand Balm is a classic.',
+            createdAt: now,
+            addedBy: 'system'
+          },
           { id: generateId(), name: 'Anthropologie', category: 'Lifestyle', logoUrl: 'https://logo.clearbit.com/anthropologie.com', website: 'https://anthropologie.com', createdAt: now, addedBy: 'system' },
           { id: generateId(), name: 'Burberry', category: 'Luxury', logoUrl: 'https://logo.clearbit.com/burberry.com', website: 'https://burberry.com', createdAt: now, addedBy: 'system' },
           { id: generateId(), name: 'Balenciaga', category: 'Luxury', logoUrl: 'https://logo.clearbit.com/balenciaga.com', website: 'https://balenciaga.com', createdAt: now, addedBy: 'system' },
@@ -143,5 +173,36 @@ export const useCollectionStore = create<CollectionState>((set, get) => ({
       activeCollectionId: sampleCollections[0].id,
     });
     console.log('[CollectionStore] Loaded sample collections');
+  },
+
+  updateStoreItem: (collectionId, itemId, updates) => {
+    set((state) => ({
+      collections: state.collections.map((c) =>
+        c.id === collectionId
+          ? {
+            ...c,
+            stores: c.stores.map((s) =>
+              s.id === itemId ? { ...s, ...updates } : s
+            ),
+            updatedAt: Date.now(),
+          }
+          : c
+      ),
+    }));
+  },
+
+  removeStoreFromCollection: (collectionId, storeId) => {
+    set((state) => ({
+      collections: state.collections.map((c) =>
+        c.id === collectionId
+          ? {
+            ...c,
+            stores: c.stores.filter((s) => s.id !== storeId),
+            updatedAt: Date.now(),
+          }
+          : c
+      ),
+    }));
+    console.log(`[CollectionStore] Removed store ${storeId} from collection ${collectionId}`);
   },
 }));

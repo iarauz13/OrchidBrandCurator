@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, Alert, ActionSheetIOS, Platform, ViewStyle, TextStyle, ImageStyle, TouchableOpacity, Modal, Pressable, TextInput } from 'react-native';
 import { ScalableButton } from '@/components/ui/ScalableButton';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -11,12 +11,75 @@ import { Collection } from '@/types/models';
 export default function CollectionsScreen() {
   const { theme } = useUIStore();
   const currentTheme = Colors[theme === 'system' ? 'light' : theme];
-  const { collections, setActiveCollection, loadSampleCollections, removeCollection, clearCollection, renameCollection } = useCollectionStore();
+  const { collections, setActiveCollection, loadSampleCollections, removeCollection, clearCollection, renameCollection, removeStoreFromCollection } = useCollectionStore();
   const router = useRouter();
 
   const [renameModalVisible, setRenameModalVisible] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
   const [newName, setNewName] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Search results grouping
+  const searchResults = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+
+    const query = searchQuery.toLowerCase();
+    const resultsMap = new Map<string, { brand: any, collectionInfo: { id: string, name: string }[] }>();
+
+    collections.forEach(col => {
+      col.stores?.forEach(store => {
+        if (store.name.toLowerCase().includes(query)) {
+          const existing = resultsMap.get(store.name);
+          if (existing) {
+            existing.collectionInfo.push({ id: col.id, name: col.name });
+          } else {
+            resultsMap.set(store.name, {
+              brand: store,
+              collectionInfo: [{ id: col.id, name: col.name }]
+            });
+          }
+        }
+      });
+    });
+
+    return Array.from(resultsMap.values());
+  }, [searchQuery, collections]);
+
+  const handleRemoveDuplicate = (item: any) => {
+    const options = item.collectionInfo.map((c: any) => `Remove from ${c.name}`);
+    options.push('Cancel');
+
+    const cancelButtonIndex = options.length - 1;
+
+    if (Platform.OS === 'ios') {
+      ActionSheetIOS.showActionSheetWithOptions(
+        {
+          options,
+          cancelButtonIndex,
+          title: `Remove duplicate: ${item.brand.name}`,
+          message: 'Select the collection you want to remove this brand from.',
+        },
+        (buttonIndex) => {
+          if (buttonIndex < cancelButtonIndex) {
+            const collection = item.collectionInfo[buttonIndex];
+            removeStoreFromCollection(collection.id, item.brand.id);
+          }
+        }
+      );
+    } else {
+      Alert.alert(
+        'Remove Duplicate',
+        `Which collection should ${item.brand.name} be removed from?`,
+        [
+          ...item.collectionInfo.map((c: any) => ({
+            text: c.name,
+            onPress: () => removeStoreFromCollection(c.id, item.brand.id)
+          })),
+          { text: 'Cancel', style: 'cancel' }
+        ]
+      );
+    }
+  };
 
   // Load sample collections if empty
   useEffect(() => {
@@ -135,6 +198,32 @@ export default function CollectionsScreen() {
     Alert.alert("Create Collection", "Collection creation will be implemented with full Firestore integration.");
   };
 
+  const renderSearchResult = ({ item }: { item: any }) => (
+    <ScalableButton
+      style={[styles.searchResult, { backgroundColor: currentTheme.card, borderColor: currentTheme.border }]}
+      onPress={() => router.push(`/brand/${item.brand.id}`)}
+    >
+      <View style={styles.searchResultContent}>
+        <View style={styles.searchResultInfo}>
+          <Text style={[styles.brandName, { color: currentTheme.text }]}>{item.brand.name}</Text>
+          <Text style={[styles.collectionList, { color: currentTheme.textSecondary }]}>
+            In Collections: {item.collectionInfo.map((c: any) => c.name).join(', ')}
+          </Text>
+        </View>
+        {item.collectionInfo.length > 1 && (
+          <TouchableOpacity
+            style={[styles.removeDuplicateButton, { backgroundColor: currentTheme.backgroundTertiary }]}
+            onPress={() => handleRemoveDuplicate(item)}
+          >
+            <FontAwesome name="copy" size={14} color={currentTheme.tint} />
+            <Text style={[styles.removeDuplicateText, { color: currentTheme.tint }]}>Dedupe</Text>
+          </TouchableOpacity>
+        )}
+        <FontAwesome name="chevron-right" size={14} color={currentTheme.textTertiary} style={{ marginLeft: 8 }} />
+      </View>
+    </ScalableButton>
+  );
+
   const renderCollection = ({ item }: { item: Collection }) => (
     <ScalableButton
       style={[styles.card, { backgroundColor: currentTheme.card, borderColor: currentTheme.border }]}
@@ -171,26 +260,56 @@ export default function CollectionsScreen() {
         <Text style={[styles.subtitle, { color: currentTheme.textSecondary }]}>
           Your curated brand libraries
         </Text>
+
+        <View style={[styles.searchContainer, { backgroundColor: currentTheme.backgroundSecondary, borderColor: currentTheme.border }]}>
+          <FontAwesome name="search" size={16} color={currentTheme.textTertiary} style={styles.searchIcon} />
+          <TextInput
+            style={[styles.searchInput, { color: currentTheme.text }]}
+            placeholder="Search brand names..."
+            placeholderTextColor={currentTheme.textTertiary}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            clearButtonMode="while-editing"
+          />
+        </View>
       </View>
 
-      <FlatList
-        data={collections}
-        keyExtractor={(item) => item.id}
-        renderItem={renderCollection}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
-          <View style={styles.emptyState}>
-            <FontAwesome name="folder-open-o" size={48} color={currentTheme.textTertiary} />
-            <Text style={[styles.emptyText, { color: currentTheme.textSecondary }]}>
-              No collections yet
-            </Text>
-            <Text style={[styles.emptySubtext, { color: currentTheme.textTertiary }]}>
-              Import a CSV or JSON file to create your first collection
-            </Text>
-          </View>
-        }
-      />
+      {searchQuery.trim() ? (
+        <FlatList
+          data={searchResults}
+          keyExtractor={(item) => item.brand.name}
+          renderItem={renderSearchResult}
+          contentContainerStyle={styles.listContent}
+          keyboardShouldPersistTaps="handled"
+          ListEmptyComponent={
+            <View style={styles.emptySearch}>
+              <FontAwesome name="search" size={40} color={currentTheme.textTertiary} />
+              <Text style={[styles.emptyText, { color: currentTheme.textSecondary }]}>
+                No brands found matching "{searchQuery}"
+              </Text>
+            </View>
+          }
+        />
+      ) : (
+        <FlatList
+          data={collections}
+          keyExtractor={(item) => item.id}
+          renderItem={renderCollection}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <View style={styles.emptyState}>
+              <FontAwesome name="folder-open-o" size={48} color={currentTheme.textTertiary} />
+              <Text style={[styles.emptyText, { color: currentTheme.textSecondary }]}>
+                No collections yet
+              </Text>
+              <Text style={[styles.emptySubtext, { color: currentTheme.textTertiary }]}>
+                Import a CSV or JSON file to create your first collection
+              </Text>
+            </View>
+          }
+        />
+      )}
 
       <ScalableButton
         style={[styles.fab, { backgroundColor: currentTheme.tint }]}
@@ -270,6 +389,23 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     fontWeight: '400',
+    marginBottom: 20,
+  } as TextStyle,
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 50,
+    borderRadius: 15,
+    borderWidth: 1,
+    paddingHorizontal: 15,
+  } as ViewStyle,
+  searchIcon: {
+    marginRight: 10,
+  },
+  searchInput: {
+    flex: 1,
+    height: '100%',
+    fontSize: 16,
   } as TextStyle,
   listContent: {
     paddingHorizontal: 20,
@@ -324,6 +460,48 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '600',
   } as TextStyle,
+  // Search Result Styles
+  searchResult: {
+    borderRadius: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    overflow: 'hidden',
+  } as ViewStyle,
+  searchResultContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+  } as ViewStyle,
+  searchResultInfo: {
+    flex: 1,
+    gap: 4,
+  } as ViewStyle,
+  brandName: {
+    fontSize: 18,
+    fontWeight: '700',
+  } as TextStyle,
+  collectionList: {
+    fontSize: 13,
+  } as TextStyle,
+  removeDuplicateButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+  } as ViewStyle,
+  removeDuplicateText: {
+    fontSize: 12,
+    fontWeight: '700',
+  } as TextStyle,
+  emptySearch: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 100,
+    gap: 16,
+    paddingHorizontal: 40,
+  } as ViewStyle,
   emptyState: {
     alignItems: 'center',
     justifyContent: 'center',

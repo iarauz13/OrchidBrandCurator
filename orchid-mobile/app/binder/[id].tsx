@@ -142,7 +142,10 @@ export default function BinderDetailScreen() {
     <ScalableButton
       style={[styles.listRow, { borderBottomColor: currentTheme.border }]}
       onPress={() => {
-        // TODO: Navigate to brand detail
+        router.push({
+          pathname: `/brand/${item.id}`,
+          params: { binderId: id }
+        });
       }}
       onLongPress={() => handleRemoveItem(item)}
       delayLongPress={400}
@@ -177,7 +180,10 @@ export default function BinderDetailScreen() {
     <ScalableButton
       style={[styles.gridItem, { backgroundColor: currentTheme.card }]}
       onPress={() => {
-        // TODO: Navigate to brand detail
+        router.push({
+          pathname: `/brand/${item.id}`,
+          params: { binderId: id }
+        });
       }}
       onLongPress={() => handleRemoveItem(item)}
       delayLongPress={400}

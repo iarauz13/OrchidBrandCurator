@@ -69,8 +69,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="feed"
         options={{
-          title: 'Feed',
-          tabBarIcon: ({ color }) => <TabBarIcon name="newspaper-o" color={color} />,
+          title: 'Messages',
+          tabBarIcon: ({ color }) => <TabBarIcon name="comments-o" color={color} />,
         }}
       />
       <Tabs.Screen

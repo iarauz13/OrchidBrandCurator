@@ -2,9 +2,13 @@ export interface StoreItem {
   id: string;
   name: string;
   category: string;
+  tags?: string[];
+  country?: string;
+  city?: string;
   description?: string;
   logoUrl?: string; // Phase 0/3 artifact
   website?: string;
+  instagram?: string;
   userNote?: string;
   createdAt: number;
   addedBy: string; // userId

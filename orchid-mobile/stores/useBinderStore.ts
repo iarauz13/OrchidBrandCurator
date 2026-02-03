@@ -24,6 +24,7 @@ interface BinderState {
   importItems: (binderId: string, items: StoreItem[], mode: 'replace' | 'append') => void;
   addItemsToBinder: (binderId: string, items: StoreItem[]) => void;
   removeItemFromBinder: (binderId: string, itemId: string) => void;
+  updateStoreItem: (binderId: string, itemId: string, updates: Partial<StoreItem>) => void;
 }
 
 export const useBinderStore = create<BinderState>((set, get) => ({
@@ -157,6 +158,26 @@ export const useBinderStore = create<BinderState>((set, get) => ({
         : state.items,
     }));
     console.log(`[BinderStore] Removed item ${itemId} from binder ${binderId}`);
+  },
+
+  updateStoreItem: (binderId, itemId, updates) => {
+    set((state) => ({
+      binders: state.binders.map((b) =>
+        b.id === binderId
+          ? {
+            ...b,
+            items: (b.items || []).map((item) =>
+              item.id === itemId ? { ...item, ...updates } : item
+            ),
+          }
+          : b
+      ),
+      items: state.activeBinderId === binderId
+        ? state.items.map((item) =>
+          item.id === itemId ? { ...item, ...updates } : item
+        )
+        : state.items,
+    }));
   },
 }));
 
