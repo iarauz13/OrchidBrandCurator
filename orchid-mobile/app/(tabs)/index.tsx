@@ -2,42 +2,54 @@ import { StyleSheet, View, Text, FlatList, Pressable } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { useBinderStore } from '@/stores/useBinderStore';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { useUIStore } from '@/stores/useUIStore';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import Colors from '@/constants/Colors';
+import { Colors } from '@/constants/Theme';
 import { useColorScheme } from '@/components/useColorScheme';
 import EmptyState from '@/components/EmptyState';
+import { ScalableButton } from '@/components/ui/ScalableButton';
 
 export default function HomeScreen() {
   const { binders, isLoading } = useBinderStore();
   const user = useAuthStore((s) => s.user);
   const router = useRouter();
+  const { theme } = useUIStore();
   const colorScheme = useColorScheme() ?? 'light';
-  const colors = Colors[colorScheme];
+  // If useUIStore.theme is 'system', we fall back to standard hook/device setting
+  // For now to keep it simple, let's stick to the colors derived from the hook which handles system/light/dark
+  // But we want to use our NEW Colors object structure which is slightly different
 
-  if (!user) return null; // Protected route handles redirect, but safer to render null
+  // Mapping current colorScheme string to our new Theme object
+  // Note: Existing code used Colors[colorScheme], which was the OLD structure.
+  // The new structure in Theme.ts is: Colors.light or Colors.dark
+  // We need to match that.
+
+  const currentTheme = Colors[colorScheme === 'dark' ? 'dark' : 'light'];
+
+  if (!user) return null;
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: currentTheme.background }]}>
       <View style={styles.header}>
-        <Text style={[styles.title, { color: colors.text }]}>My Binders</Text>
+        <Text style={[styles.title, { color: currentTheme.text }]}>My Binders</Text>
         <View style={{ flexDirection: 'row', gap: 12 }}>
           <Link href="/scan" asChild>
-            <Pressable style={[styles.addButton, { backgroundColor: colors.cardBackground, borderWidth: 1, borderColor: colors.textSecondary + '40' }]}>
-              <FontAwesome name="qrcode" size={16} color={colors.text} />
-            </Pressable>
+            <ScalableButton style={[styles.addButton, { backgroundColor: currentTheme.card, borderWidth: 1, borderColor: currentTheme.border }]}>
+              <FontAwesome name="qrcode" size={16} color={currentTheme.text} />
+            </ScalableButton>
           </Link>
           <Link href="/modal" asChild>
-            <Pressable style={styles.addButton}>
-              <FontAwesome name="plus" size={16} color="#fff" />
-              <Text style={styles.addButtonText}>New</Text>
-            </Pressable>
+            <ScalableButton style={[styles.addButton, { backgroundColor: currentTheme.tint }]}>
+              <FontAwesome name="plus" size={16} color={currentTheme.textInverse} />
+              <Text style={[styles.addButtonText, { color: currentTheme.textInverse }]}>New</Text>
+            </ScalableButton>
           </Link>
         </View>
       </View>
 
       {isLoading && binders.length === 0 ? (
         <View style={styles.center}>
-          <Text style={{ color: colors.textSecondary }}>Syncing...</Text>
+          <Text style={{ color: currentTheme.textSecondary }}>Syncing...</Text>
         </View>
       ) : binders.length === 0 ? (
         <EmptyState
@@ -54,18 +66,21 @@ export default function HomeScreen() {
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
             <Link href={`/binder/${item.id}`} asChild>
-              <Pressable style={[styles.card, { backgroundColor: colors.cardBackground }]}>
-                <View style={[styles.cardIcon, { backgroundColor: colors.background, borderColor: colors.textSecondary + '20' }]}>
-                  <FontAwesome name={item.isShared ? "users" : "book"} size={24} color={colors.text} />
+              <ScalableButton
+                scaleTo={0.98}
+                style={[styles.card, { backgroundColor: currentTheme.card }]}
+              >
+                <View style={[styles.cardIcon, { backgroundColor: currentTheme.backgroundSecondary, borderColor: currentTheme.border }]}>
+                  <FontAwesome name={item.isShared ? "users" : "book"} size={24} color={currentTheme.text} />
                 </View>
                 <View style={styles.cardContent}>
-                  <Text style={[styles.cardTitle, { color: colors.text }]}>{item.name}</Text>
-                  <Text style={[styles.cardSubtitle, { color: colors.textSecondary }]}>
+                  <Text style={[styles.cardTitle, { color: currentTheme.text }]}>{item.name}</Text>
+                  <Text style={[styles.cardSubtitle, { color: currentTheme.textSecondary }]}>
                     {item.items?.length || 0} items • {item.isShared ? 'Shared' : 'Private'}
                   </Text>
                 </View>
-                <FontAwesome name="chevron-right" size={14} color={colors.textSecondary} />
-              </Pressable>
+                <FontAwesome name="chevron-right" size={14} color={currentTheme.textTertiary} />
+              </ScalableButton>
             </Link>
           )}
         />
