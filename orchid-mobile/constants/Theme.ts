@@ -74,6 +74,78 @@ export const Colors = {
       error: palette.error,
     }
   },
+  champagne: {
+    // Web: Champagne & Pearl (Warm/Pearl gradient)
+    text: '#4a3728', // Dark warm brown
+    textSecondary: '#8a7161',
+    textTertiary: '#bcaaa4',
+    textInverse: '#ffffff',
+
+    background: '#F9F4F0', // Pearl/Off-white solid approximation
+    backgroundSecondary: '#EFEBE9',
+    backgroundTertiary: '#e2d1c3',
+
+    border: '#d7ccc8',
+
+    tint: '#854d0e', // Gold/Bronze accent
+    tabIconDefault: '#8a7161',
+    tabIconSelected: '#854d0e',
+
+    card: '#ffffff',
+    status: {
+      success: '#2E7D32',
+      warning: '#EF6C00',
+      error: '#C62828',
+    }
+  },
+  midnight: {
+    // Web: Midnight Silk (Deep Blue/Slate gradient)
+    text: '#e0f2fe', // Very light blue
+    textSecondary: '#7dd3fc',
+    textTertiary: '#38bdf8',
+    textInverse: '#0f172a',
+
+    background: '#0f172a', // Deep Slate Blue solid
+    backgroundSecondary: '#1e293b',
+    backgroundTertiary: '#334155',
+
+    border: '#1e293b',
+
+    tint: '#38bdf8', // Sky Blue accent
+    tabIconDefault: '#475569',
+    tabIconSelected: '#38bdf8',
+
+    card: '#1e293b',
+    status: {
+      success: '#00E676',
+      warning: '#FFAB00',
+      error: '#FF1744',
+    }
+  },
+  botanical: {
+    // Web: Botanical Sanctuary (Forest/Teal gradient)
+    text: '#ecfdf5', // Mint cream
+    textSecondary: '#6ee7b7',
+    textTertiary: '#34d399',
+    textInverse: '#064e3b',
+
+    background: '#064e3b', // Deep Forest Green
+    backgroundSecondary: '#065f46',
+    backgroundTertiary: '#047857',
+
+    border: '#065f46',
+
+    tint: '#a7f3d0', // Mint Green accent
+    tabIconDefault: '#059669',
+    tabIconSelected: '#a7f3d0',
+
+    card: '#065f46',
+    status: {
+      success: '#34d399',
+      warning: '#fbbf24',
+      error: '#f87171',
+    }
+  }
 };
 
 export const Spacing = {

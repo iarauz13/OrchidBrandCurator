@@ -39,12 +39,10 @@ export default function RootLayout() {
   useBinderSubscription();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
-      console.log('Auth State Changed:', user ? 'Logged In' : 'Logged Out');
-      setUser(user);
-      setLoading(false);
-    });
-    return unsubscribe;
+    // We let the useProtectedRoute handle navigation.
+    // Initialization of user state happens via onAuthStateChanged or the Login Screen.
+    // If Firebase is restricted, the user can use the "Demo Mode" button on the Login Screen.
+    setLoading(false);
   }, []);
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.

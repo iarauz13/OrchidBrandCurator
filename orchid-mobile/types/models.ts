@@ -28,3 +28,19 @@ export interface Binder {
   // The User requirement says: "items: StoreItem[] // Items in the active binder" in the store.
   // We will keep the Type definition distinct.
 }
+
+/**
+ * Collection: Main data container for brand imports (from CSV/JSON files).
+ * Collections are the primary "dictionaries" users build with their brands.
+ * Binders are separate sub-groupings created from Collection items.
+ */
+export interface Collection {
+  id: string;
+  name: string;
+  ownerId: string;
+  stores: StoreItem[]; // Brand items imported into this collection
+  coverImage?: string;
+  createdAt: number;
+  updatedAt: number;
+}
+

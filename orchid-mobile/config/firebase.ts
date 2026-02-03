@@ -12,6 +12,11 @@ const firebaseConfig = {
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 };
 
+console.log("Debug: Firebase Config Loaded:", {
+  apiKey: firebaseConfig.apiKey ? "Present (Starts with " + firebaseConfig.apiKey.substring(0, 4) + ")" : "MISSING",
+  projectId: firebaseConfig.projectId,
+});
+
 let app: FirebaseApp;
 let auth: Auth;
 let db: Firestore;

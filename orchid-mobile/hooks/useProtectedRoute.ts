@@ -10,16 +10,16 @@ export function useProtectedRoute() {
   useEffect(() => {
     if (isLoading) return;
 
-    const inAuthGroup = segments[0] === '(auth)';
+    const isLoginPage = segments[0] === 'login';
 
     // Debug logic for Phase 2 verification
     console.log(`[Auth Check] User: ${!!user}, Segment: ${segments[0]}`);
 
-    if (!user && !inAuthGroup) {
-      // If user is not signed in and not in the auth group, redirect to login
-      router.replace('/(auth)/login');
-    } else if (user && inAuthGroup) {
-      // If user is signed in but still in auth group (login page), redirect to home
+    if (!user && !isLoginPage) {
+      // If user is not signed in and not on login page, redirect to login
+      router.replace('/login');
+    } else if (user && isLoginPage) {
+      // If user is signed in but on login page, redirect to home
       router.replace('/(tabs)');
     }
   }, [user, segments, isLoading]);

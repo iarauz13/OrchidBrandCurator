@@ -18,12 +18,12 @@ const mmkvStorage = {
 */
 
 interface UIState {
-  theme: 'light' | 'dark' | 'system';
+  theme: 'light' | 'dark' | 'system' | 'champagne' | 'midnight' | 'botanical';
   isMascotEnabled: boolean;
   isReducedMotionEnabled: boolean;
 
   // Actions
-  setTheme: (theme: 'light' | 'dark' | 'system') => void;
+  setTheme: (theme: 'light' | 'dark' | 'system' | 'champagne' | 'midnight' | 'botanical') => void;
   toggleMascot: () => void;
   toggleReducedMotion: () => void;
 }

@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { collection, addDoc } from 'firebase/firestore';
 import { FIREBASE_DB } from '@/config/firebase';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { ScalableButton } from '@/components/ui/ScalableButton';
+import { Colors } from '@/constants/Theme';
+import { useUIStore } from '@/stores/useUIStore';
 
 export default function ModalScreen() {
   const [name, setName] = useState('');
@@ -11,6 +14,8 @@ export default function ModalScreen() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
+  const { theme } = useUIStore();
+  const currentTheme = Colors[theme === 'system' ? 'light' : theme];
 
   const handleCreate = async () => {
     if (!name.trim() || !user) return;
@@ -36,35 +41,70 @@ export default function ModalScreen() {
     }
   };
 
+  const isFormValid = name.trim().length > 0;
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>New Binder</Text>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={[styles.container, { backgroundColor: currentTheme.background }]}
+    >
+      <Text style={[styles.title, { color: currentTheme.text }]}>New Binder</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Binder Name (e.g., Summer 2024)"
-        value={name}
-        onChangeText={setName}
-        autoFocus
-      />
+      <View style={styles.formGroup}>
+        <TextInput
+          style={[styles.input, {
+            backgroundColor: currentTheme.card,
+            borderColor: currentTheme.border,
+            color: currentTheme.text
+          }]}
+          placeholder="Binder Name (e.g., Summer 2024)"
+          placeholderTextColor={currentTheme.textSecondary}
+          value={name}
+          onChangeText={setName}
+          autoFocus
+        />
 
-      <TextInput
-        style={[styles.input, styles.textArea]}
-        placeholder="Description (Optional)"
-        value={description}
-        onChangeText={setDescription}
-        multiline
-      />
+        <TextInput
+          style={[styles.input, styles.textArea, {
+            backgroundColor: currentTheme.card,
+            borderColor: currentTheme.border,
+            color: currentTheme.text
+          }]}
+          placeholder="Description (Optional)"
+          placeholderTextColor={currentTheme.textSecondary}
+          value={description}
+          onChangeText={setDescription}
+          multiline
+        />
+      </View>
 
       <View style={styles.actions}>
         {loading ? (
-          <ActivityIndicator />
+          <ActivityIndicator color={currentTheme.tint} />
         ) : (
-          <Button title="Create Binder" onPress={handleCreate} disabled={!name.trim()} />
+          <View style={{ gap: 12 }}>
+            <ScalableButton
+              style={[
+                styles.button,
+                { backgroundColor: isFormValid ? currentTheme.tint : currentTheme.border }
+              ]}
+              onPress={handleCreate}
+              disabled={!isFormValid}
+            >
+              <Text style={[styles.buttonText, { color: currentTheme.textInverse }]}>Create Binder</Text>
+            </ScalableButton>
+
+            <ScalableButton
+              style={[styles.button, { backgroundColor: 'transparent' }]}
+              onPress={() => router.back()}
+              scaleTo={0.98}
+            >
+              <Text style={[styles.buttonText, { color: currentTheme.textSecondary }]}>Cancel</Text>
+            </ScalableButton>
+          </View>
         )}
-        <Button title="Cancel" color="#666" onPress={() => router.back()} />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -72,28 +112,39 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
-    backgroundColor: '#fff',
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 24,
+    marginBottom: 32,
+    marginTop: 20,
+  },
+  formGroup: {
+    gap: 16,
+    marginBottom: 32,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#eee',
     padding: 16,
-    borderRadius: 12,
-    marginBottom: 16,
+    borderRadius: 16,
     fontSize: 16,
-    backgroundColor: '#f9f9f9',
   },
   textArea: {
-    height: 100,
+    height: 120,
     textAlignVertical: 'top',
   },
   actions: {
+    marginTop: 'auto',
     gap: 12,
-    marginTop: 16,
+  },
+  button: {
+    padding: 18,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    fontWeight: '600',
+    fontSize: 16,
   },
 });
